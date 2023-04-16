@@ -1,8 +1,11 @@
-<% if user_signed_in? %>
-  <div> Welcome <%= current_user.email %> </div>
-  <%= button_to "Sign out", destroy_user_session_path, method: :delete %>
-<% else %>
-  <%= button_to "Sign in", new_user_session_path %>
-<% end %>
+<div class="prose mx-auto mb-16">
+  <% if user_signed_in? %>
+    <div> Welcome <%= current_user.email %> </div>
+    <%= button_to "Sign out", destroy_user_session_path, method: :delete, class:"bg-gray-100 px-4 py-2 rounded hover:bg-gray-300" %>
+  <% else %>
+    <div class = "btn btn-xs sm:btn-sm md:btn-md lg:btn-lg">
+      <%= button_to "Sign in", new_user_session_path, class:"bg-gray-100 px-4 py-2 rounded hover:bg-gray-300" %>
+    </div>
+  <% end %>
+</div>
 
-<h1>Hello VPNer!</h1>
