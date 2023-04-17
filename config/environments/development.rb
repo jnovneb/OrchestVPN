@@ -41,7 +41,7 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-  config.action.mailer.default_url_options = {:host => "dev.myhost.com"}
+  #config.action.mailer.default_url_options = {:host => "dev.myhost.com"}
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
