@@ -19,70 +19,47 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
         </label>
         <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
+        <%if user_signed_in? %>
+          <li><%= link_to "Home", home_path %></li>
+          <li><%= link_to "VPN", vpn_path %></li>
+          <li><%= link_to "Contact", contact_path %></li>
+        <%else %>
           <li><a>Home</a></li>
-          <li><a>About</a></li>
+          <li><a>VPN</a></li>
           <li><a>Contact</a></li>
+        <%end %>
         </ul>
       </div>
-      <a class="btn btn-ghost normal-case text-xl">OrchestratorVPN</a>
+      <h1 class="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl"><span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">OrchestratorVPN</span>
     </div>
     <div class="navbar-center hidden lg:flex">
-      <ul class="menu menu-horizontal px-1">
-        <li><a>Home</a></li>
-        <li><a>VPN</a></li>
-        <li><a>Contact</a></li>
+      <ul class="menu menu-horizontal px-20">
+        <%if user_signed_in? %>
+          <li><%= link_to "Home", home_path %></li>
+          <li><%= link_to "VPN", vpn_path %></li>
+          <li><%= link_to "Contact", contact_path %></li>
+        <%else %>
+          <li><a>Home</a></li>
+          <li><a>VPN</a></li>
+          <li><a>Contact</a></li>
+        <%end %>
       </ul>
     </div>
     <div class="navbar-end">
       <% if user_signed_in? %>
-        <%= button_to "Sign out", destroy_user_session_path, method: :delete, class:"btn" %>
-        <%= link_to "Edit Profile", edit_user_registration_path %>
+        <%= button_to "Sign out ", destroy_user_session_path, method: :delete, class:"btn" %>
+        <%= link_to "Edit Profile ", edit_user_registration_path, class:"px-8" %>
       <% else %>
-        <%= button_to "Sign in", new_user_session_path, class: "btn"%>
+        <%= button_to "Sign in" , new_user_session_path, class: "btn"%>
       <% end %>
     </div>
   </div>
+  <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
+
+
 
   <%= yield %>
-
-  <button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar" type="button" class="inline-flex items-center p-2 mt-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-    <span class="sr-only">Open sidebar</span>
-    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-      <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
-    </svg>
-  </button>
-
-  <aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-    <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-      <ul class="space-y-2 font-medium">
-        <li>
-          <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-            <span class="ml-3">Dashboard</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-            <span class="flex-1 ml-3 whitespace-nowrap">Kanban</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-            <span class="flex-1 ml-3 whitespace-nowrap">Inbox</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-            <span class="flex-1 ml-3 whitespace-nowrap">Users</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-            <span class="flex-1 ml-3 whitespace-nowrap">Products</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </aside>
 
   </body>
 </html>
