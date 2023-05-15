@@ -9,5 +9,9 @@ Rails.application.routes.draw do
 
   get '/vpn', to: 'vpn#index', as: 'vpn'
   get '/contact', to: 'contact#index', as: 'contact'
+  get '/connect', to: 'connect#index', as: 'connect'
+  get '/settings', to: 'settings#index', as: 'settings'
+  get '/monitoring', to: 'monitoring#index', as: 'monitoring'
+
 
 end

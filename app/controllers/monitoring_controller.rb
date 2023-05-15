@@ -1,0 +1,2 @@
+class MonitoringController < ApplicationController
+end

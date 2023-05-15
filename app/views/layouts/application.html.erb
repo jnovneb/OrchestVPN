@@ -7,7 +7,8 @@
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-
+    <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
+    <%= javascript_include_tag 'application' %>
     <%= javascript_importmap_tags %>
   </head>
 
@@ -20,7 +21,7 @@
         </label>
         <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
         <%if user_signed_in? %>
-          <li><%= link_to "Home", home_path %></li>
+          <li><%= link_to "Home", home_path, class: "btn active:bg-violet-1000 focus:outline-none focus:ring focus:ring-violet-600" %></li>
           <li><%= link_to "VPN", vpn_path %></li>
           <li><%= link_to "Contact", contact_path %></li>
         <%else %>
@@ -37,7 +38,7 @@
         <%if user_signed_in? %>
           <li><%= link_to "Home", home_path %></li>
           <li><%= link_to "VPN", vpn_path %></li>
-          <li><%= link_to "Contact", contact_path %></li>
+          <li><%= link_to "Contact", contact_path%></li>
         <%else %>
           <li><a>Home</a></li>
           <li><a>VPN</a></li>
