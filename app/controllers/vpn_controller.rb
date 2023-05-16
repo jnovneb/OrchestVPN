@@ -8,6 +8,10 @@ class VpnController < ApplicationController
     @vpn = VPN.new
   end
 
+  def show
+    @vpn = vpn.find(params[:id])
+  end
+
   # Agrega la acción 'create' para manejar el envío del formulario
   def create
     @vpn = VPN.new(vpn_params)

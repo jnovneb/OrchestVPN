@@ -5,9 +5,6 @@
 
 
 
-<!-- This is an example component -->
-<div>
-    
     <div class="border-b border-gray-200 dark:border-gray-700 mb-4">
         <ul class="flex flex-wrap -mb-px" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
             <li class="mr-2" role="presentation">
@@ -34,7 +31,7 @@
     </div>
     <div id="myTabContent">
         <div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800" id="new" role="tabpanel" aria-labelledby="profile-tab">
-        <%= form_with model: @vpn, url: vpn_path, method: :post do |form| %>
+        <%= form_with(model: @vpn, local: true) do |form| %>
                 <div class="flex flex-wrap -mx-3 mb-6">
                     <div class="w-full  px-3 mb-6 md:mb-0">
                     <%= form.label :name, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 parse" do %>
@@ -59,12 +56,12 @@
                         <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="vpn_password">
                             Password
                         </label>
-                        <%= form.password_field :password, id: "vpn_password", class: "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" %>
+                        <%= form.password_field :password, id: "vpn_password", class: "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500", style: "display: none;" %>
                     </div>
                 </div>
                 <div class="flex items-start mb-6">
                     <div class="flex items-center h-5">
-                        <%= form.check_box :use_password, id: "vpn_use_password", class: "w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800", onchange: "valueChanged()" %>
+                        <%= form.check_box :use_password, id: "vpn_use_password", class: "w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800", onclick: "document.getElementById('vpn_password').style.display = (this.checked ? 'inline' : 'none');" %>
                     </div>
                     <label for="terms" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Select this if you want to use a password</label>
                 </div>
@@ -116,8 +113,7 @@
                     </div>
                 </div>
                 </br>
-                
-              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Create VPN</button>
+               <%= form.submit "Create VPN", class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" %> 
         </div>
 
         <% end %>
@@ -126,11 +122,30 @@
             <p class="text-gray-500 dark:text-gray-400 text-sm">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Dashboard tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
         </div>
         <div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800 hidden" id="help" role="tabpanel" aria-labelledby="settings-tab">
-            <p class="text-gray-500 dark:text-gray-400 text-sm">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Settings tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
+
         </div>
         <div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800 hidden" id="faq" role="tabpanel" aria-labelledby="contacts-tab">
-            <p class="text-gray-500 dark:text-gray-400 text-sm">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Contacts tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
-        </div>
+            <div tabindex="0" class="collapse collapse-open border border-base-300 bg-base-100 rounded-box my-5">
+                <div class="collapse-title text-xl font-medium">
+                    How can I monitore a VPN?
+                </div>
+                <div class="collapse-content">
+                    <p>You are only allowed to monitore a VPN if the signed user has an administrator role of it, there is an exceptional case, if the user is the global
+                    administrator is able to monitore every single network. When one of these conditions have been accomplished, user can click at the home window the monitore
+                    button of the VPN selected.
+                    </p>
+                </div>
+            </div>
+            <div tabindex="0" class="collapse collapse-open border border-base-300 bg-base-100 rounded-box my-5">
+            <div class="collapse-title text-xl font-medium">
+                How can I create a VPN?
+            </div>
+            <div class="collapse-content">
+                <p>Every user is allowed to create a VPN. In the VPN window, user is automatically redirected to the VPN creation site, then user has to fill all the gaps in
+                order to create the VPN desired.
+                </p>
+            </div>
+        </div>       
     </div>
 
 </div>

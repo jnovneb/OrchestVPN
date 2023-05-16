@@ -1,52 +1,33 @@
 
-
 <div class="overflow-x-auto">
   <table class="table w-full">
-    <!-- head -->
     <thead>
       <tr>
-        <th></th>
+        <th>Id</th>
         <th>Name</th>
         <th>Description</th>
         <th>Role</th>
         <th>Connect</th>
         <th>Settings</th>
-        <% if current_user.admin%>
+        <% if current_user.admin %>
           <th>Monitoring</th>
-        <%end%>
+        <% end %>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <th>1</th>
-        <td>Example 1</td>
-        <td>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</td>
-        <td>Client</td>
-        <td>Aquí tienes que poner un botón para darle a play</td>
-        <td>Aquí botón de la rueda de ajustes, que te redirija a una página donde esté toda la configuración</td>
-        <% if current_user.admin%>
-          <td>Si eres admin puedes o insertar aquí los gráficos </td>
-        <%end%>
-
-      </tr>
-      <!-- row 2 -->
-      <tr>
-        <th>2</th>
-        <td>Hart Hagerty</td>
-        <td>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</td>
-        <td>Desktop Support Technician</td>
-        <td>Purple</td>
-        <td>Aquí botón de la rueda de ajustes, que te redirija a una página donde esté toda la configuración</td>
-      </tr>
-      <!-- row 3 -->
-      <tr>
-        <th>3</th>
-        <td>Brice Swyre</td>
-        <td>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</td>
-        <td>Tax Accountant</td>
-        <td>Red</td>
-        <td>Aquí botón de la rueda de ajustes, que te redirija a una página donde esté toda la configuración</td>
-      </tr>
+      <%= @vpns.each do |vpn| %>
+        <tr>
+          <th><%= vpn[:id] %></th>
+          <td><%= vpn[:name] %></td>
+          <td><%= vpn[:description] %></td>
+          <td><%= vpn[:role] %></td>
+          <td><%= vpn[:connect] %></td>
+          <td><%= vpn[:settings] %></td>
+          <% if current_user.admin %>
+            <td><%= vpn[:monitoring] %></td>
+          <% end %>
+        </tr>
+      <% end %>
     </tbody>
   </table>
 </div>
