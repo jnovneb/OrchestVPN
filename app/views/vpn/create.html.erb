@@ -1,0 +1,152 @@
+<link rel="stylesheet" href="https://unpkg.com/@themesberg/flowbite@1.2.0/dist/flowbite.min.css" />
+
+
+
+
+
+    <div class="border-b border-gray-200 dark:border-gray-700 mb-4">
+        <ul class="flex flex-wrap -mb-px" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
+            <li class="mr-2" role="presentation">
+            <%= button_tag class: "inline-block text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium text-center border-transparent border-b-2 dark:text-gray-400 dark:hover:text-gray-300 active", id: "new-tab", "data-tabs-target": "#new", type: "button", role: "tab", "aria-controls": "profile", "aria-selected": true do %>
+                New VPN
+            <% end %>
+            </li>
+            <li class="mr-2" role="presentation">
+            <%= button_tag class: "inline-block text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium text-center border-transparent border-b-2 dark:text-gray-400 dark:hover:text-gray-300", id: "deploy-tab", "data-tabs-target": "#deploy", type: "button", role: "tab", "aria-controls": "dashboard", "aria-selected": false do %>
+                Deploy VPN
+            <% end %>
+            </li>
+            <li class="mr-2" role="presentation">
+            <%= button_tag class: "inline-block text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium text-center border-transparent border-b-2 dark:text-gray-400 dark:hover:text-gray-300", id: "help-tab", "data-tabs-target": "#help", type: "button", role: "tab", "aria-controls": "settings", "aria-selected": false do %>
+            Help
+            <% end %>
+            </li>
+            <li role="presentation">
+            <%= button_tag class: "inline-block text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium text-center border-transparent border-b-2 dark:text-gray-400 dark:hover:text-gray-300", id: "faq-tab", "data-tabs-target": "#faq", type: "button", role: "tab", "aria-controls": "contacts", "aria-selected": false do %>
+            FAQ
+            <% end %>
+            </li>
+        </ul>
+    </div>
+    <div id="myTabContent">
+        <div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800" id="new" role="tabpanel" aria-labelledby="profile-tab">
+        <%= form_with(model: @vpn, local: true, url: create_vpn_path, method: :post) do |form| %>
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="w-full  px-3 mb-6 md:mb-0">
+                    <%= form.label :name, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 parse" do %>
+                        Name
+                    <% end %>
+                    <%= form.text_field :name, name: "vpn[name]", id: "vpn_name", class: "appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" %>
+
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="w-full px-3 mb-6 md:mb-0">
+                        <label for="vpn_description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Description
+                        </label>
+                        <%= form.text_area :description, id: "vpn_description", rows: 4, class: "block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", placeholder: "Write your thoughts here..." %>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="w-full px-3">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="vpn_password">
+                            Password
+                        </label>
+                        <%= form.password_field :password, id: "vpn_password",name: "vpn[password]", class: "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500", style: "display: none;" %>
+                    </div>
+                </div>
+                <div class="flex items-start mb-6">
+                    <div class="flex items-center h-5">
+                        <%= form.check_box :use_password, id: "vpn_use_password", class: "w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800", onclick: "document.getElementById('vpn_password').style.display = (this.checked ? 'inline' : 'none');" %>
+                    </div>
+                    <label for="terms" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Select this if you want to use a password</label>
+                </div>
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="w-full px-3 mb-6 md:mb-0">
+                        <%= form.label :port, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" do %>
+                            Port
+                        <% end %>
+                        <%= form.text_field :port, name: "vpn[port]",class: "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" %>
+                    </div>
+                </div>
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="w-full px-3 mb-6 md:mb-0">
+                        <%= form.label :server, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" do %>
+                            Server
+                        <% end %>
+                        <%= form.text_field :server,name: "vpn[server]", class: "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" %>
+                    </div>
+                </div>
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="w-full px-3 mb-6 md:mb-0">
+                    <%= form.label :technology, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" do %>
+                        Technology
+                      <% end %>
+                      <%= form.text_field :technology, class: "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight", readonly: true, value: "OpenVPN" %>
+                    </div>
+                </div>
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="w-full px-3 mb-6 md:mb-0">
+                    <%= form.label :users, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2", for: "users" do %>
+                        Select users
+                      <% end %>
+                      <%= form.select :users, options_for_select(["Choose users", "Example1", "Example2", "Example3", "Example4"]), class: "block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500", id: "users" %>
+                    </div>
+                </div>
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="w-full px-3 mb-6 md:mb-0">
+                    <%= form.label :administrators, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2", for: "administrators" do %>
+                        Select administrators
+                      <% end %>
+                      <%= form.select :administrators, options_for_select(["Choose administrators", "Example1", "Example2", "Example3", "Example4"]), class: "block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500", id: "administrators" %>
+                    </div>
+                </div>
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="w-full px-3 mb-6 md:mb-0">
+                        <label for="Bandwidth" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Limit bandwidth</label>
+                        <%= form.select :bandwidth, options_for_select([['Choose bandwidth(MB/s)', ''], ['5', 5], ['10', 10], ['25', 25], ['50', 50], ['75', 75], ['100', 100]]), { include_blank: true }, class: 'block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500', id: 'bandwidth' %>
+
+                    </div>
+                </div>
+                </br>
+               <%= form.submit "Create VPN", class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" %> 
+        </div>
+
+        <% end %>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800 hidden" id="deploy" role="tabpanel" aria-labelledby="dashboard-tab">
+            <p class="text-gray-500 dark:text-gray-400 text-sm">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Dashboard tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800 hidden" id="help" role="tabpanel" aria-labelledby="settings-tab">
+
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800 hidden" id="faq" role="tabpanel" aria-labelledby="contacts-tab">
+            <div tabindex="0" class="collapse collapse-open border border-base-300 bg-base-100 rounded-box my-5">
+                <div class="collapse-title text-xl font-medium">
+                    How can I monitore a VPN?
+                </div>
+                <div class="collapse-content">
+                    <p>You are only allowed to monitore a VPN if the signed user has an administrator role of it, there is an exceptional case, if the user is the global
+                    administrator is able to monitore every single network. When one of these conditions have been accomplished, user can click at the home window the monitore
+                    button of the VPN selected.
+                    </p>
+                </div>
+            </div>
+            <div tabindex="0" class="collapse collapse-open border border-base-300 bg-base-100 rounded-box my-5">
+            <div class="collapse-title text-xl font-medium">
+                How can I create a VPN?
+            </div>
+            <div class="collapse-content">
+                <p>Every user is allowed to create a VPN. In the VPN window, user is automatically redirected to the VPN creation site, then user has to fill all the gaps in
+                order to create the VPN desired.
+                </p>
+            </div>
+        </div>       
+    </div>
+
+</div>
+
+<script src="https://unpkg.com/@themesberg/flowbite@1.2.0/dist/flowbite.bundle.js"></script>

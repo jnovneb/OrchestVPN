@@ -1,3 +1,5 @@
+
+
 class VpnController < ApplicationController
   before_action :authenticate_user!
   def index
@@ -5,26 +7,27 @@ class VpnController < ApplicationController
   end
 
   def new
-    @vpn = VPN.new
+    @vpn = Vpn.new
   end
 
   def show
-    @vpn = vpn.find(params[:id])
+    @vpn = Vpn.find(params[:id])
   end
 
   # Agrega la acción 'create' para manejar el envío del formulario
   def create
-    @vpn = VPN.new(vpn_params)
+    puts params.inspect
+    @vpn = Vpn.new(vpn_params)
     if @vpn.save
-      redirect_to @vpn, notice: 'VPN creada exitosamente.'
+     redirect_to @vpn, notice: 'VPN creada exitosamente.'
     else
-      render :new
+     render :new
     end
   end
 
   private
 
   def vpn_params
-    params.require(:vpn).permit(:name, :servidor, :port, )
+    params.require(:vpn).permit(:name, :description)
   end
 end

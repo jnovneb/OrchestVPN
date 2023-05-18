@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users
+  resources :vpns, only: [:new, :create]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
@@ -12,6 +13,9 @@ Rails.application.routes.draw do
   get '/connect', to: 'connect#index', as: 'connect'
   get '/settings', to: 'settings#index', as: 'settings'
   get '/monitoring', to: 'monitoring#index', as: 'monitoring'
+
+  post '/vpn', to: 'vpn#create', as: 'create_vpn'
+
 
 
 end
