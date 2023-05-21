@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_21_134600) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_21_143539) do
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -43,6 +43,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_21_134600) do
     t.string "version"
     t.string "clientoptions"
     t.string "VPNAdminList"
+    t.string "users"
+    t.string "encrypted_password"
+    t.string "vpn_admin_list"
   end
 
 end
