@@ -22,4 +22,8 @@ class User < ApplicationRecord
     signed_in? ? current_user.admin : false
   end
 
+  def is_vpnadmin?
+    signed_in? ? current_user.admin_vpn : false
+  end
+
 end

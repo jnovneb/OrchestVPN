@@ -20,7 +20,11 @@
           <th><%= vpn[:id] %></th>
           <td><%= vpn[:name] %></td>
           <td><%= vpn[:description] %></td>
-          <td><%= vpn[:role] %></td>
+          <% if current_user.admin %>
+            <td>Admin</td>
+          <%else%>
+          <td>User</td>
+          <%end%>
           <td><%= vpn[:connect] %></td>
           <td><%= vpn[:settings] %></td>
           <% if current_user.admin %>

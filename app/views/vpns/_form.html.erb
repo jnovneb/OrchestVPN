@@ -30,7 +30,18 @@
     </div>
     <div id="myTabContent">
         <div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800" id="new" role="tabpanel" aria-labelledby="profile-tab">
-        <%= form_with(model: @vpn, local: true, url: create_vpn_path, method: :post) do |form| %>
+        <%= form_with(model: @vpn, class: "contents") do |form| %>
+          <% if vpn.errors.any? %>
+            <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+              <h2><%= pluralize(vpn.errors.count, "error") %> prohibited this vpn from being saved:</h2>
+              <ul>
+                <% vpn.errors.each do |error| %>
+                <li><%= error.full_message %></li>
+              <% end %>
+              </ul>
+            </div>
+          <% end %>
+
                 <div class="flex flex-wrap -mx-3 mb-6">
                     <div class="w-full  px-3 mb-6 md:mb-0">
                     <%= form.label :name, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 parse" do %>
@@ -112,7 +123,9 @@
                     </div>
                 </div>
                 </br>
-               <%= form.submit "Create VPN", class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" %> 
+                <div class="inline">
+                  <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" %>
+                </div>
         </div>
 
         <% end %>
@@ -150,3 +163,6 @@
 </div>
 
 <script src="https://unpkg.com/@themesberg/flowbite@1.2.0/dist/flowbite.bundle.js"></script>
+
+
+

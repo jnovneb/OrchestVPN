@@ -15,7 +15,7 @@ class HomeController < ApplicationController
     #Aquí llamarás a la página donde se muestren los ajustes
   end
 
-  def monitore
+  def monitor
     #Aquí llamarás a la página donde se muestre la monitorización
   end
 end

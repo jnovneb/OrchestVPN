@@ -22,7 +22,7 @@
         <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
         <%if user_signed_in? %>
           <li><%= link_to "Home", home_path, class: "btn active:bg-violet-1000 focus:outline-none focus:ring focus:ring-violet-600" %></li>
-          <li><%= link_to "VPN", vpn_path %></li>
+          <li><%= link_to "VPN", vpns_path %></li>
           <li><%= link_to "Contact", contact_path %></li>
         <%else %>
           <li><a>Home</a></li>
@@ -37,7 +37,7 @@
       <ul class="menu menu-horizontal px-20">
         <%if user_signed_in? %>
           <li><%= link_to "Home", home_path %></li>
-          <li><%= link_to "VPN", vpn_path %></li>
+          <li><%= link_to "VPN", vpns_path %></li>
           <li><%= link_to "Contact", contact_path%></li>
         <%else %>
           <li><a>Home</a></li>

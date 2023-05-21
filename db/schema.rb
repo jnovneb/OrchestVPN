@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_15_190400) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_21_134600) do
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -20,22 +20,29 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_15_190400) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "admin", default: false, null: false
+    t.string "user"
+    t.string "vpn_admin_List"
+    t.boolean "admin_vpn"
+    t.string "vpn_list"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   create_table "vpns", force: :cascade do |t|
-    t.string "name"
-    t.text "description"
-    t.string "protocol"
-    t.integer "port"
-    t.string "server"
-    t.text "options"
-    t.string "technology"
-    t.string "VPNAdminList"
-    t.string "version"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "vpn"
+    t.string "name"
+    t.string "description"
+    t.string "protocol"
+    t.integer "port"
+    t.string "encryption"
+    t.string "options"
+    t.string "certificate"
+    t.string "server"
+    t.string "version"
+    t.string "clientoptions"
+    t.string "VPNAdminList"
   end
 
 end

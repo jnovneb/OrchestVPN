@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :vpn do
+  factory :vpn_new do
     
   end
 end
