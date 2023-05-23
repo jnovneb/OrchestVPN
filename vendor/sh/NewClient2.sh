@@ -8,14 +8,16 @@ fi
 
 # Verificar si se proporcionaron suficientes argumentos
 if [ $# -lt 3 ]; then
-  echo "Uso: $0 <IP_DEL_SERVIDOR> <PUERTO_DEL_SERVIDOR> <NOMBRE_DEL_CLIENTE>"
+  echo "Uso: $0 <IP_DEL_SERVIDOR> <PUERTO_DEL_SERVIDOR> <CLIENTE> [ANCHO_DE_BANDA] [CONTRASENA]"
   exit 1
 fi
 
-# Obtener los argumentos
-IP_SERVIDOR="$1"
-PUERTO_SERVIDOR="$2"
-CLIENTE="$3"
+# Asignar argumentos a variables
+IP_SERVIDOR=$1
+PUERTO_SERVIDOR=$2
+CLIENTE=$3
+ANCHO_DE_BANDA=$4
+CONTRASENA=$5
 
 # Configurar la ruta de la carpeta de salida del cliente
 OUTPUT_DIR="/etc/openvpn/clientes/$CLIENTE"
@@ -44,20 +46,18 @@ echo "comp-lzo" >> "$OUTPUT_DIR/client.ovpn"
 echo "verb 3" >> "$OUTPUT_DIR/client.ovpn"
 
 # Solicitar los usuarios del cliente separados por comas
-read -p "Usuarios del cliente (separados por comas): " USUARIOS
+#read -p "Usuarios del cliente (separados por comas): " USUARIOS
 
 # Crear el archivo de autenticación del cliente
-echo -n "$USUARIOS" | tr -s ',' '\n' > "$OUTPUT_DIR/users.txt"
-
-# Solicitar una contraseña opcional
-read -p "Contraseña (opcional): " CONTRASENA
+#echo -n "$USUARIOS" | tr -s ',' '\n' > "$OUTPUT_DIR/users.txt"
 
 # Si se proporcionó una contraseña, crear el archivo de contraseña del cliente
 if [ -n "$CONTRASENA" ]; then
   echo "$CONTRASENA" > "$OUTPUT_DIR/pass.txt"
 fi
 
-# Comprimir los archivos del cliente en un archivo .zip
-zip -j "$OUTPUT_DIR/$CLIENTE.zip" "$OUTPUT_DIR/ca.crt" "$OUTPUT_DIR/$CLIENTE.crt" "$OUTPUT_DIR/$CLIENTE.key" "$OUTPUT_DIR/dh.pem" "$OUTPUT_DIR/client.ovpn" "$OUTPUT_DIR/users.txt" "$OUTPUT_DIR/pass.txt"
-
+# Si se proporcionó un ancho de banda, limitarlo en el archivo de configuración del cliente
+if [ -n "$ANCHO_DE_BANDA" ]; then
+  echo "up /etc/openvpn/scripts/limit_bandwidth.sh $ANCHO_DE_BANDA" >> "$OUTPUT_DIR/client.ovpn"
+fi
 
