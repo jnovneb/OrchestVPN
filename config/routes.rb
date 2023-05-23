@@ -11,7 +11,6 @@ Rails.application.routes.draw do
   get '/connect', to: 'connect#index', as: 'connect'
   get '/settings', to: 'settings#index', as: 'settings'
   get '/monitoring', to: 'monitoring#index', as: 'monitoring'
-
-
+  get '/ejecutar', to:'ejecutar#index', as:'ejecutar'
 
 end

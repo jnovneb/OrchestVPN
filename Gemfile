@@ -50,6 +50,10 @@ gem "bootsnap", require: false
 
 gem 'jquery-rails'
 
+gem 'select2-rails'
+
+gem 'turbolinks'
+
 # Use Sass to process CSS
 # gem "sassc-rails"
 

@@ -22,11 +22,23 @@ class VpnsController < ApplicationController
   # POST /vpns or /vpns.json
   def create
     @vpn = Vpn.new(vpn_params)
+    password = "javier y pepo"
 
     respond_to do |format|
       if @vpn.save
+        ip_servidor = @vpn.server
+        puerto_servidor = @vpn.port
+        cliente = @vpn.name
+        ancho_banda = @vpn.bandwidth.present? ? @vpn.bandwidth : nil
+        contrasena = @vpn.encrypted_password.present? ? @vpn.bandwidth : nil
+        # Llamar al script de Bash con los argumentos recopilados
+        command = "echo '#{password}' | sudo -S #{Rails.root}/vendor/sh/NewClient2.sh #{ip_servidor} #{puerto_servidor} #{cliente} #{ancho_banda} #{contrasena}"
+        system(command)
+        #exec("#{Rails.root}/vendor/sh/NewClient2.sh #{ip_servidor} #{puerto_servidor} #{cliente} #{ancho_banda} #{contrasena}")
+
         format.html { redirect_to vpn_url(@vpn), notice: "Vpn was successfully created." }
         format.json { render :show, status: :created, location: @vpn }
+
       else
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @vpn.errors, status: :unprocessable_entity }
@@ -70,5 +82,16 @@ class VpnsController < ApplicationController
 
     def vpn_params
       params.require(:vpn).permit(:name, :description, :encrypted_password, :port, :server, :user, :vpn_admin_list)
+    end
+
+    def newClient
+      # Ruta al archivo .sh
+      script_path = Rails.root.join('vendor', 'sh', 'crear_carpeta.sh').to_s
+
+      # Ejecutar el archivo .sh usando el comando del sistema
+      system(script_path)
+
+      # Redirigir a alguna página o mostrar un mensaje de éxito
+      redirect_to root_path, notice: 'El script se ha ejecutado correctamente.'
     end
 end

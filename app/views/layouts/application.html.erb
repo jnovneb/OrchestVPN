@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <%= turbo_frame_tag 'turbo-frame' %>
     <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
@@ -39,6 +40,8 @@
           <li><%= link_to "Home", home_path %></li>
           <li><%= link_to "VPN", vpns_path %></li>
           <li><%= link_to "Contact", contact_path%></li>
+          </li>
+
         <%else %>
           <li><a>Home</a></li>
           <li><a>VPN</a></li>
