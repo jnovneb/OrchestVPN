@@ -6,26 +6,33 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-# Verificar si se proporcionó el nombre del cliente como argumento
+# Verificar si se proporcionó el nombre del cliente a revocar
 if [ $# -lt 1 ]; then
   echo "Uso: $0 <NOMBRE_DEL_CLIENTE>"
   exit 1
 fi
 
-# Obtener el nombre del cliente
-CLIENTE="$1"
+# Asignar el nombre del cliente a revocar a una variable
+CLIENT="$1"
 
 # Verificar si el cliente existe
-if [ ! -d "/etc/openvpn/clientes/$CLIENTE" ]; then
-  echo "El cliente OpenVPN \"$CLIENTE\" no existe."
-  exit 1
+CLIENTEXISTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c -E "/CN=$CLIENT\$")
+if [[ $CLIENTEXISTS == '0' ]]; then
+  echo ""
+  echo "El cliente especificado no existe en easy-rsa."
+  exit
 fi
 
-# Eliminar el archivo .ovpn del cliente
-rm -f "/etc/openvpn/clientes/$CLIENTE/$CLIENTE.ovpn"
+cd /etc/openvpn/easy-rsa/ || exit
+./easyrsa --batch revoke "$CLIENT"
+EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
+rm -f /etc/openvpn/crl.pem
+cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
+chmod 644 /etc/openvpn/crl.pem
+rm -r "/home/$CLIENT"
+rm -f "/root/$CLIENT.ovpn"
+sed -i "/^$CLIENT,.*/d" /etc/openvpn/ipp.txt
+cp /etc/openvpn/easy-rsa/pki/index.txt{,.bk}
 
-# Eliminar la carpeta del cliente
-rm -rf "/etc/openvpn/clientes/$CLIENTE"
-
-echo "El cliente OpenVPN \"$CLIENTE\" y el archivo .ovpn han sido eliminados correctamente."
-
+echo ""
+echo "Certificado para el cliente $CLIENT revocado y la carpeta eliminada."
