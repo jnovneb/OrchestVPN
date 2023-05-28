@@ -7,17 +7,18 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # Verificar si se proporcionaron suficientes argumentos
-if [ $# -lt 3 ]; then
-  echo "Uso: $0 <NOMBRE_DEL_CLIENTE> <IP_DEL_SERVIDOR> <PUERTO_DEL_SERVIDOR> [CONTRASENA] [ANCHO_DE_BANDA]"
+if [ $# -lt 4 ]; then
+  echo "Uso: $0 <ruta ><NOMBRE_DEL_CLIENTE> <IP_DEL_SERVIDOR> <PUERTO_DEL_SERVIDOR> [CONTRASENA] [ANCHO_DE_BANDA]"
   exit 1
 fi
 
 # Asignar argumentos a variables
-CLIENT="$1"
-IP_SERVIDOR="$2"
-PUERTO_SERVIDOR="$3"
-CONTRASENA="$4"
-ANCHO_DE_BANDA="$5"
+ruta="$1"
+CLIENT="$2"
+IP_SERVIDOR="$3"
+PUERTO_SERVIDOR="$4"
+CONTRASENA="$5"
+ANCHO_DE_BANDA="$6"
 
 # Verificar si el cliente ya existe
 CLIENTEXISTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c -E "/CN=$CLIENT\$")
@@ -26,6 +27,13 @@ if [[ $CLIENTEXISTS == '1' ]]; then
   echo "El cliente especificado ya existe en easy-rsa, por favor elige otro nombre."
   exit
 fi
+
+# Crear la carpeta del cliente con los permisos adecuados
+clientDirec="$ruta/$CLIENT"
+mkdir -p "$clientDirec"
+chmod 755 "$clientDir"
+chown "$SUDO_USER:$SUDO_USER" "$clientDir"
+
 
 # Generar el cliente utilizando easyrsa
 cd /etc/openvpn/easy-rsa/ || exit
@@ -40,27 +48,6 @@ case $CONTRASENA in
 esac
 echo "Cliente $CLIENT añadido."
 
-# Directorio principal del usuario, donde se escribirá la configuración del cliente
-if [ -e "/home/${CLIENT}" ]; then
-  # Si $1 es un nombre de usuario
-  homeDir="/home/${CLIENT}"
-elif [ "${SUDO_USER}" ]; then
-  # Si no, utiliza SUDO_USER
-  if [ "${SUDO_USER}" == "root" ]; then
-    # Si se ejecuta sudo como root
-    homeDir="/root"
-  else
-    homeDir="/home/${SUDO_USER}"
-  fi
-else
-  # Si no hay SUDO_USER, utiliza /root
-  homeDir="/root"
-fi
-
-# Crear la carpeta del cliente con los permisos adecuados
-clientDir="$homeDir/$CLIENT"
-mkdir -p "$clientDir"
-chown -R "$SUDO_USER:$SUDO_USER" "$clientDir"
 
 # Determinar si se utiliza tls-auth o tls-crypt
 if grep -qs "^tls-crypt" /etc/openvpn/server.conf; then
@@ -70,7 +57,8 @@ elif grep -qs "^tls-auth" /etc/openvpn/server.conf; then
 fi
 
 # Genera el archivo de configuración personalizado client.ovpn
-cp /etc/openvpn/client-template.txt "$clientDir/$CLIENT.ovpn"
+cp /etc/openvpn/client-template.txt "$clientDirec/$CLIENT.ovpn"
+
 {
   echo "<ca>"
   cat "/etc/openvpn/easy-rsa/pki/ca.crt"
@@ -97,8 +85,8 @@ cp /etc/openvpn/client-template.txt "$clientDir/$CLIENT.ovpn"
       echo "</tls-auth>"
       ;;
   esac
-} >>"$clientDir/$CLIENT.ovpn"
+} >> "$clientDirec/$CLIENT.ovpn"
 
 echo ""
-echo "El archivo de configuración se ha escrito en $clientDir/$CLIENT.ovpn."
+echo "El archivo de configuración se ha escrito en $clientDirec/$CLIENT.ovpn."
 echo "Descarga el archivo .ovpn e impórtalo en tu cliente OpenVPN."

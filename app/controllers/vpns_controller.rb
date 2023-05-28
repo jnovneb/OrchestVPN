@@ -1,5 +1,6 @@
 class VpnsController < ApplicationController
   before_action :set_vpn, only: %i[ show edit update destroy ]
+  
 
   # GET /vpns or /vpns.json
   def index
@@ -26,13 +27,14 @@ class VpnsController < ApplicationController
 
     respond_to do |format|
       if @vpn.save
+        ruta = Rails.root.join('vpn_files').to_s
         ip_servidor = @vpn.server
         puerto_servidor = @vpn.port
         cliente = @vpn.name
         ancho_banda = @vpn.bandwidth.present? ? @vpn.bandwidth : nil
         contrasena = @vpn.encrypted_password.present? ? @vpn.bandwidth : nil
         # Llamar al script de Bash con los argumentos recopilados
-        command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/NewClient3.sh #{cliente} #{ip_servidor} #{puerto_servidor} #{ancho_banda} #{contrasena}"
+        command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/NewClient3.sh #{ruta} #{cliente} #{ip_servidor} #{puerto_servidor} #{ancho_banda} #{contrasena}"
         system(command)
         #exec("#{Rails.root}/vendor/sh/NewClient3.sh #{ip_servidor} #{puerto_servidor} #{cliente} #{contrasena} #{ancho_banda}")
 
@@ -63,8 +65,9 @@ class VpnsController < ApplicationController
   def destroy
     password = "javier y pepo"
     nombre = @vpn.name
+    ruta = Rails.root.join('vpn_files').to_s
     #Llamar al script de Bash con los argumentos recopilados
-    command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{nombre}"
+    command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{nombre} #{ruta}"
     system(command)
     @vpn.destroy
 
@@ -86,7 +89,7 @@ class VpnsController < ApplicationController
     end
 
     def vpn_params
-      params.require(:vpn).permit(:name, :description, :encrypted_password, :port, :server, :user, :vpn_admin_list)
+      params.require(:vpn).permit(:name, :description, :encrypted_password, :port, :server, :bandwidth)
     end
 
 end

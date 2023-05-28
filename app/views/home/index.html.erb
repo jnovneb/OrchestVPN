@@ -3,29 +3,29 @@
   <table class="table w-full">
     <thead>
       <tr>
-        <th>Id</th>
         <th>Name</th>
         <th>Description</th>
         <th>Role</th>
         <th>Connect</th>
         <th>Settings</th>
         <% if current_user.admin %>
-          <th>Monitoring</th>
+          <th>Monitore</th>
         <% end %>
       </tr>
     </thead>
     <tbody>
       <% @vpns.each do |vpn| %>
         <tr>
-          <th><%= vpn[:id] %></th>
           <td><%= vpn[:name] %></td>
           <td><%= vpn[:description] %></td>
-          <% if current_user.admin %>
+          <% if current_user.admin_vpn %>
             <td>Admin</td>
           <%else%>
           <td>User</td>
           <%end%>
-          <td><%= vpn[:connect] %></td>
+          <td>
+            <%= button_to "Connect", connect_path(vpn_id: vpn.id), class:"btn" %>
+          </td>
           <td><%= vpn[:settings] %></td>
           <% if current_user.admin %>
             <td><%= vpn[:monitoring] %></td>

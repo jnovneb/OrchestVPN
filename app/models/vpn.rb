@@ -1,2 +1,3 @@
 class Vpn < ApplicationRecord
+
 end

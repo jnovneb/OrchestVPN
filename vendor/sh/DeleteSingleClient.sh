@@ -14,6 +14,7 @@ fi
 
 # Asignar el nombre del cliente a revocar a una variable
 CLIENT="$1"
+ruta="$2"
 
 # Verificar si el cliente existe
 CLIENTEXISTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c -E "/CN=$CLIENT\$")
@@ -29,8 +30,7 @@ EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
 rm -f /etc/openvpn/crl.pem
 cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
 chmod 644 /etc/openvpn/crl.pem
-rm -r "/home/$CLIENT"
-rm -f "/root/$CLIENT.ovpn"
+rm -r "/$ruta/$CLIENT"
 sed -i "/^$CLIENT,.*/d" /etc/openvpn/ipp.txt
 cp /etc/openvpn/easy-rsa/pki/index.txt{,.bk}
 
