@@ -1,0 +1,92 @@
+<%= form_with(model: server, class: "contents") do |form| %>
+  <% if server.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+      <h2><%= pluralize(server.errors.count, "error") %> prohibited this server from being saved:</h2>
+
+      <ul>
+        <% server.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :name, "Name"%>
+    <%= form.text_field :name, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :addr, "Introduce the public IP" %>
+    <%= form.text_field :addr, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="my-5"
+    <%= form.label :IPv6, "Do you want to use IPv6?" %>
+    <br></br>
+    <%= form.radio_button :IPv6, true %>
+    <%= form.label :IPv6_true, "Yes" %>
+
+    <%= form.radio_button :IPv6, false %>
+    <%= form.label :IPv6_false, "No" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :port, "Introduce the port" %>
+    <%= form.text_field :port, value: "1194", class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :protocol, "Select a protocol" %>
+    <%= form.select :protocol, [['UDP(recommended)', 'udp'], ['TCP', 'tcp']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="my-5">
+  <%= form.label :dns, "DNS" %>
+  <%= form.select :dns, [['UDP(recommended)', 'udp'], ['TCP', 'tcp']], { id: "selectedDNS" }, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", style: "display: inline;" %>
+  <%= form.text_field :dns, id: "selectedDNS", class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", style: "display: none;" %>
+  </div>
+
+<div class="flex items-start mb-6">
+  <div class="flex items-center h-5">
+    <%= form.check_box :use_password, id: "vpn_use_password", class: "w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800", data: { target: "#selectedDNS" } %>
+  </div>
+  <label for="vpn_use_password" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Select this if you want to use a custom DNS</label>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const checkbox = document.getElementById('vpn_use_password');
+    const selectedDNS = document.getElementById('selectedDNS');
+    const notselectedDNS = document.getElementById('notselectedDNS');
+
+    checkbox.addEventListener('change', function() {
+      selectedDNS.style.display = this.checked ? 'block' : 'none';
+      notselectedDNS.style.display = this.checked ? 'none' : 'inline';
+    });
+  });
+</script>
+
+
+
+
+
+  <div class="my-5">
+    <%= form.label :credentials %>
+    <%= form.text_field :credentials, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :hostkey %>
+    <%= form.text_field :hostkey, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :CA %>
+    <%= form.text_field :CA, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>

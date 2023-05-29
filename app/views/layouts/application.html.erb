@@ -25,10 +25,11 @@
         <%if user_signed_in? %>
           <li><%= link_to "Home", home_path, class: "btn active:bg-violet-1000 focus:outline-none focus:ring focus:ring-violet-600" %></li>
           <li><%= link_to "VPN", vpns_path %></li>
-          <li><%= link_to "Contact", contact_path %></li>
           <% if current_user.admin %>
             <li><%= link_to "Users", users_path %></li>
+            <li><%= link_to "Servers", servers_path %></li>
           <% end%>
+          <li><%= link_to "Contact", contact_path %></li>
         <%else %>
           <li><a>Home</a></li>
           <li><a>VPN</a></li>
@@ -43,10 +44,11 @@
         <%if user_signed_in? %>
           <li><%= link_to "Home", home_path %></li>
           <li><%= link_to "VPN", vpns_path %></li>
-          <li><%= link_to "Contact", contact_path%></li>
           <% if current_user.admin %>
             <li><%= link_to "Users", users_path %></li>
+            <li><%= link_to "Servers", servers_path %></li>
           <% end%>
+          <li><%= link_to "Contact", contact_path%></li>
           </li>
 
         <%else %>

@@ -1,0 +1,32 @@
+<div id="<%= dom_id server %>">
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Name:</strong>
+    <%= server.name %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Addr:</strong>
+    <%= server.addr %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Credentials:</strong>
+    <%= server.credentials %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Hostkey:</strong>
+    <%= server.hostkey %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Ca:</strong>
+    <%= server.CA %>
+  </p>
+
+  <% if action_name != "show" %>
+    <%= link_to "Show this server", server, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+    <%= link_to 'Edit this server', edit_server_path(server), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
+    <hr class="mt-6">
+  <% end %>
+</div>

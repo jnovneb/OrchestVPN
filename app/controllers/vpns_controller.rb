@@ -23,6 +23,8 @@ class VpnsController < ApplicationController
   # POST /vpns or /vpns.json
   def create
     @vpn = Vpn.new(vpn_params)
+    #Esto es solo para probar
+    @vpn.user_id = current_user.id
     password = "javier y pepo"
 
     respond_to do |format|
@@ -87,9 +89,10 @@ class VpnsController < ApplicationController
     def vpn_params_old
       params.fetch(:vpn, {})
     end
-
     def vpn_params
-      params.require(:vpn).permit(:name, :description, :encrypted_password, :port, :server, :bandwidth)
+      params.require(:vpn).permit(:name, :description, :encrypted_password, :port, :server, :bandwidth, users: [], vpn_admin_list: [])
     end
+
+    
 
 end
