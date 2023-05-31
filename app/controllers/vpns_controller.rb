@@ -22,6 +22,16 @@ class VpnsController < ApplicationController
 
   # POST /vpns or /vpns.json
   def create
+    # Verificar y asignar usuarios seleccionados
+    user_ids = params[:vpn][:users].reject(&:empty?) if params[:vpn][:users]
+    users = User.where(id: user_ids)
+    params[:vpn][:users] = users if users.present?
+    
+    # Verificar y asignar administradores seleccionados
+    admin_ids = params[:vpn][:vpn_admin_list].reject(&:empty?) if params[:vpn][:vpn_admin_list]
+    admins = User.where(id: admin_ids)
+    params[:vpn][:vpn_admin_list] = admins if admins.present?
+
     @vpn = Vpn.new(vpn_params)
     #Esto es solo para probar
     @vpn.user_id = current_user.id

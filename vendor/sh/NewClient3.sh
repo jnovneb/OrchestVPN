@@ -8,7 +8,7 @@ fi
 
 # Verificar si se proporcionaron suficientes argumentos
 if [ $# -lt 4 ]; then
-  echo "Uso: $0 <ruta ><NOMBRE_DEL_CLIENTE> <IP_DEL_SERVIDOR> <PUERTO_DEL_SERVIDOR> [CONTRASENA] [ANCHO_DE_BANDA]"
+  echo "Uso: $0 <ruta> <NOMBRE_DEL_CLIENTE> <IP_DEL_SERVIDOR> <PUERTO_DEL_SERVIDOR> [CONTRASENA] [ANCHO_DE_BANDA]"
   exit 1
 fi
 
@@ -31,14 +31,14 @@ fi
 # Crear la carpeta del cliente con los permisos adecuados
 clientDirec="$ruta/$CLIENT"
 mkdir -p "$clientDirec"
-chmod 755 "$clientDir"
-chown "$SUDO_USER:$SUDO_USER" "$clientDir"
-
+chmod 755 "$clientDirec"
+chown "$SUDO_USER:$SUDO_USER" "$clientDirec"
 
 # Generar el cliente utilizando easyrsa
 cd /etc/openvpn/easy-rsa/ || exit
 case $CONTRASENA in
   "")
+  echo "DENTRO CARALLO"
     ./easyrsa --batch build-client-full "$CLIENT" nopass
     ;;
   *)
@@ -56,7 +56,7 @@ elif grep -qs "^tls-auth" /etc/openvpn/server.conf; then
   TLS_SIG="2"
 fi
 
-# Genera el archivo de configuración personalizado client.ovpn
+# Generar el archivo de configuración personalizado client.ovpn
 cp /etc/openvpn/client-template.txt "$clientDirec/$CLIENT.ovpn"
 
 {
