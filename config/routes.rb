@@ -14,5 +14,11 @@ Rails.application.routes.draw do
   get '/settings', to: 'settings#index', as: 'settings'
   get '/monitoring', to: 'monitoring#index', as: 'monitoring'
   get '/ejecutar', to:'ejecutar#index', as:'ejecutar'
-  get '/users', to: 'users#index', as:'users'
+
+  resources :users do
+    member do
+      patch :move_to_admins
+      patch :move_to_non_admins
+    end
+  end
 end

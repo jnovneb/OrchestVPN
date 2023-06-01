@@ -39,11 +39,12 @@ cd /etc/openvpn/easy-rsa/ || exit
 case $CONTRASENA in
   "")
   echo "DENTRO CARALLO"
-    ./easyrsa --batch build-client-full "$CLIENT" nopass
+      ./easyrsa --batch build-client-full "$CLIENT"
     ;;
   *)
     echo "⚠️ Se te solicitará la contraseña del cliente a continuación ⚠️"
-    ./easyrsa --batch build-client-full "$CLIENT"
+        ./easyrsa --batch build-client-full "$CLIENT" nopass
+
     ;;
 esac
 echo "Cliente $CLIENT añadido."

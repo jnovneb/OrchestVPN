@@ -1,0 +1,32 @@
+<h1>Usuarios</h1>
+
+<div class="users-container">
+  <div class="non-admins-container">
+    <h2>Usuarios Normales</h2>
+    <ul id="non-admins-list">
+      <% @non_admins.each do |non_admin| %>
+        <li>
+          <%= button_to non_admin.email, move_to_admins_user_path(non_admin), params: { selected_user_id: non_admin.id }, method: :patch, class: 'non-admin-button' %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="button-container">
+    <% if @selected_user %>
+      <%= button_to '>', move_to_admins_user_path(@selected_user), method: :patch, class: 'move-button' %>
+      <%= button_to '<', move_to_non_admins_user_path(@selected_user), method: :patch, class: 'move-button' %>
+    <% end %>
+  </div>
+
+  <div class="admins-container">
+    <h2>Usuarios Administradores</h2>
+    <ul id="admins-list">
+      <% @admins.each do |admin| %>
+        <li>
+          <%= button_to admin.email, move_to_non_admins_user_path(admin), params: { selected_user_id: admin.id }, method: :patch, class: 'admin-button' %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

@@ -34,7 +34,6 @@ class VpnsController < ApplicationController
 
     @vpn = Vpn.new(vpn_params)
     #Esto es solo para probar
-    @vpn.user_id = current_user.id
     password = "javier y pepo"
 
     respond_to do |format|
