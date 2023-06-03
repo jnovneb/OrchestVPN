@@ -38,7 +38,6 @@ chown "$SUDO_USER:$SUDO_USER" "$clientDirec"
 cd /etc/openvpn/easy-rsa/ || exit
 case $CONTRASENA in
   "")
-  echo "DENTRO CARALLO"
       ./easyrsa --batch build-client-full "$CLIENT"
     ;;
   *)

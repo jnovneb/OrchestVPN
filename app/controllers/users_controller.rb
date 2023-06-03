@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
     before_action :set_selected_user, only: [:move_to_admins, :move_to_non_admins]
+    
     def index
         @non_admins = User.where(admin: false)
         @admins = User.where(admin: true)

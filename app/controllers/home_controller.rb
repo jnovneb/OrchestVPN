@@ -4,7 +4,11 @@ class HomeController < ApplicationController
 #  before_action :authenticate_admin!, only: [:action] # `only` part if applicable
 
   def index
-    @vpns = Vpn.all
+    if current_user.admin
+      @vpns = Vpn.all
+    else
+      @user_vpns = current_user.vpns
+    end
   end
 
   def show

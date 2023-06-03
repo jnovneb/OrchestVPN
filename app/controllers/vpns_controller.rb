@@ -4,8 +4,13 @@ class VpnsController < ApplicationController
 
   # GET /vpns or /vpns.json
   def index
-    @vpns = Vpn.all
+    if current_user.admin
+      @vpns = Vpn.all
+    else
+      @vpns = current_user.users_vpns.where(admin_vpn: true).map(&:vpn)
+    end
   end
+  
 
   # GET /vpns/1 or /vpns/1.json
   def show
@@ -32,11 +37,15 @@ class VpnsController < ApplicationController
     admins = User.where(id: admin_ids)
     params[:vpn][:vpn_admin_list] = admins if admins.present?
 
+
     @vpn = Vpn.new(vpn_params)
     #Esto es solo para probar
     password = "javier y pepo"
 
     respond_to do |format|
+      admin_ids = params[:vpn][:vpn_admin_list].is_a?(Array) ? params[:vpn][:vpn_admin_list].reject(&:empty?) : []
+      admins = User.where(id: admin_ids)
+      params[:vpn][:vpn_admin_list] = admins if admins.present?
       if @vpn.save
         ruta = Rails.root.join('vpn_files').to_s
         ip_servidor = @vpn.server
@@ -47,7 +56,10 @@ class VpnsController < ApplicationController
         # Llamar al script de Bash con los argumentos recopilados
         command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/NewClient3.sh #{ruta} #{cliente} #{ip_servidor} #{puerto_servidor} #{ancho_banda} #{contrasena}"
         system(command)
-        #exec("#{Rails.root}/vendor/sh/NewClient3.sh #{ip_servidor} #{puerto_servidor} #{cliente} #{contrasena} #{ancho_banda}")
+        # Actualizar el parámetro admin_vpn para el usuario actual
+        current_user_vpn = @vpn.users_vpns.find_by(user_id: current_user.id)
+        current_user_vpn.update(admin_vpn: true) if current_user_vpn
+
 
         format.html { redirect_to vpn_url(@vpn), notice: "Vpn was successfully created." }
         format.json { render :show, status: :created, location: @vpn }
@@ -99,7 +111,7 @@ class VpnsController < ApplicationController
       params.fetch(:vpn, {})
     end
     def vpn_params
-      params.require(:vpn).permit(:name, :description, :encrypted_password, :port, :server, :bandwidth, users: [], vpn_admin_list: [])
+      params.require(:vpn).permit(:name, :description, :encrypted_password, :port, :server, :bandwidth, user_ids: [], vpn_admin_list: [])
     end
 
     

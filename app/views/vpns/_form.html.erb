@@ -99,7 +99,7 @@
                     <%= form.label :users, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2", for: "users" do %>
                         Select users
                       <% end %>
-                      <%= form.select :users, User.pluck(:email, :id), {include_blank: true}, {multiple: true, data: {controller: 'slim'}, name: 'vpn[users][]', selected: ['1'] }%>
+                      <%= form.select :user_ids, User.pluck(:email, :id), {include_blank: true}, {multiple: true, data: {controller: 'slim'}, name: 'vpn[user_ids][]', selected: ['1'] } %>
                       <label id="selected-users-label"></label>
                     </div>
                 </div>
@@ -108,8 +108,8 @@
                     <%= form.label :vpn_admin_list, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2", for: "administrators" do %>
                         Select administrators
                       <% end %>
-                      <%= form.select :vpn_admin_list, User.pluck(:email, :id), {include_blank: true}, {multiple: true, data: {controller: 'slim'}, name: 'vpn[vpn_admin_list][]',  selected: ['1']} %>
-                    </div>
+                      <%= form.select :vpn_admin_list, User.pluck(:email, :id), {include_blank: true}, {multiple: true, data: {controller: 'slim'}, name: 'vpn[vpn_admin_list][]', selected: [current_user.id.to_s] } %>
+                      </div>
                 </div>
                 <%= form.hidden_field :user_id, value: current_user.id %>
                 <div class="flex flex-wrap -mx-3 mb-6">
