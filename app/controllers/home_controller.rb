@@ -25,7 +25,6 @@ class HomeController < ApplicationController
 
   def connect
     vpn_id = params[:vpn_id]
-    begin
       # Guarda el nombre de la VPN y luego la ruta del archivo de configuración
       nombre = Vpn.find(vpn_id).name
       ruta = Rails.root.join('vpn_files', "#{nombre}", "#{nombre}.ovpn").to_s
