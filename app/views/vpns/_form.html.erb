@@ -43,7 +43,6 @@
                         Name
                     <% end %>
                     <%= form.text_field :name, name: "vpn[name]", id: "vpn_name", class: "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" %>
-
                     </div>
                 </div>
 
@@ -57,18 +56,12 @@
                 </div>
 
                 <div class="flex flex-wrap -mx-3 mb-6">
-                    <div class="w-full px-3">
-                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="vpn_password">
-                            Password
-                        </label>
-                        <%= form.password_field :encrypted_password, id: "vpn_password",name: "vpn[password]", class: "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500", style: "display: none;" %>
+                    <div class="w-full  px-3 mb-6 md:mb-0">
+                        <%= form.label :CIDR, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 parse" do %>
+                            Introduce the private IP
+                        <% end %>
+                        <%= form.text_field :CIDR, name: "vpn[CIDR]", id: "vpn_CIDR", class: "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" %>
                     </div>
-                </div>
-                <div class="flex items-start mb-6">
-                    <div class="flex items-center h-5">
-                        <%= form.check_box :use_password, id: "vpn_use_password", class: "w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800", onclick: "document.getElementById('vpn_password').style.display = (this.checked ? 'inline' : 'none');" %>
-                    </div>
-                    <label for="terms" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Select this if you want to use a password</label>
                 </div>
                 <div class="flex flex-wrap -mx-3 mb-6">
                     <div class="w-full px-3 mb-6 md:mb-0">

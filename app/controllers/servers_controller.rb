@@ -232,10 +232,10 @@ else
 end
 
 opciones = "#{name}\n#{address}\n#{port}\n#{protocol}\n#{dnstext}#{compresstxt}#{encrypttxt}#{curveencrypttxt}#{sizekeytxt}#{controlCiphertxt}#{controlCipherChanneltxt}#{controlCipherChannel2txt}#{dhtxt}#{dhopttxt}#{dhopttxt2}#{digesttxt}#{tlstxt}"
-puts opciones
 
-puts name
+puts opciones
 @server = Server.new(server_params)
+@server.update_attributes(options: opciones)
 
     respond_to do |format|
       if @server.save

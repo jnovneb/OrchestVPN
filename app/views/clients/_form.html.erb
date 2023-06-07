@@ -13,7 +13,7 @@
 
   <div class="my-5">
     <%= form.label :vpn %>
-    <%= form.text_field :vpn, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.text_field :vpn, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", value: @vpn_name, readonly: true %>
   </div>
 
   <div class="my-5">
@@ -22,19 +22,24 @@
   </div>
 
   <div class="my-5">
+    <%= form.label :encrypted_password, "Password" %>
+    <%= form.password_field :encrypted_password, id: "client_password",name: "client[password]", class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", style: "display: none;" %>
+  </div>
+
+  <div class="my-5">
+    <div class="flex items-start mb-6">
+      <div class="flex items-center h-5">
+        <%= form.check_box :use_password, id: "vpn_use_password", class: "w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800", onclick: "document.getElementById('client_password').style.display = (this.checked ? 'inline' : 'none');" %>
+    </div>
+      <label for="terms" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Select this if you want to use a password</label>
+    </div>
+  </div>
+
+  <div class="my-5">
     <%= form.label :desc %>
     <%= form.text_field :desc, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :cert %>
-    <%= form.text_field :cert, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :options %>
-    <%= form.text_field :options, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
 
   <div class="inline">
     <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>

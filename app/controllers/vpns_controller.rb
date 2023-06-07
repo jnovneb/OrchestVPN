@@ -31,6 +31,8 @@ class VpnsController < ApplicationController
     user_ids = params[:vpn][:users].reject(&:empty?) if params[:vpn][:users]
     users = User.where(id: user_ids)
     params[:vpn][:users] = users if users.present?
+
+    cidr = params[:vpn][:CIDR]
     
     # Verificar y asignar administradores seleccionados
     admin_ids = params[:vpn][:vpn_admin_list].reject(&:empty?) if params[:vpn][:vpn_admin_list]
@@ -52,9 +54,8 @@ class VpnsController < ApplicationController
         puerto_servidor = @vpn.port
         cliente = @vpn.name
         ancho_banda = @vpn.bandwidth.present? ? @vpn.bandwidth : nil
-        contrasena = @vpn.encrypted_password.present? ? @vpn.bandwidth : nil
         # Llamar al script de Bash con los argumentos recopilados
-        command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/NewClient3.sh #{ruta} #{cliente} #{ip_servidor} #{puerto_servidor} #{ancho_banda} #{contrasena}"
+        command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/newVPN.sh #{ruta} #{cliente} #{puerto_servidor} #{ancho_banda}"
         system(command)
         # Actualizar el parámetro admin_vpn para el usuario actual
         current_user_vpn = @vpn.users_vpns.find_by(user_id: current_user.id)
@@ -107,11 +108,8 @@ class VpnsController < ApplicationController
     end
 
     # Only allow a list of trusted parameters through.
-    def vpn_params_old
-      params.fetch(:vpn, {})
-    end
     def vpn_params
-      params.require(:vpn).permit(:name, :description, :encrypted_password, :port, :server, :bandwidth, user_ids: [], vpn_admin_list: [])
+      params.require(:vpn).permit(:name, :description, :port, :server, :bandwidth, user_ids: [], vpn_admin_list: [])
     end
 
     

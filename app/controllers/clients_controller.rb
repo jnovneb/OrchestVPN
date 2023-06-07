@@ -13,6 +13,7 @@ class ClientsController < ApplicationController
   # GET /clients/new
   def new
     @client = Client.new
+    @vpn_name = params[:vpn_name]
   end
 
   # GET /clients/1/edit
@@ -21,7 +22,35 @@ class ClientsController < ApplicationController
 
   # POST /clients or /clients.json
   def create
+
     @client = Client.new(client_params)
+    vpn = @client.vpn
+    name = @client.name
+    ruta = Rails.root.join('vpn_files', vpn).to_s
+    password = 'javier y pepo'
+
+
+
+    if @client.encrypted_password.present?
+      contrasena = @client.encrypted_password
+    else
+      contrasena = nil
+    end
+    
+    command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/newClient.sh #{ruta} #{name} #{contrasena}"
+    system(command)
+
+
+    rt = Rails.root.join('vpn_files', vpn, name+".ovpn")
+
+    archivo = File.read(rt)
+    config= archivo.match(/.*(?=<ca>)/m).to_s
+    cert = archivo.scan(/<cert>(.*?)<\/cert>/m).flatten.first
+
+    @client.update_attribute(:cert, cert)
+    
+    @client.update_attribute(:options, config)
+
 
     respond_to do |format|
       if @client.save
@@ -49,6 +78,13 @@ class ClientsController < ApplicationController
 
   # DELETE /clients/1 or /clients/1.json
   def destroy
+
+    password = "javier y pepo"
+    nombre = @client.name
+    ruta = Rails.root.join('vpn_files').to_s
+    #Llamar al script de Bash con los argumentos recopilados
+    command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{nombre} #{ruta}"
+    system(command)
     @client.destroy
 
     respond_to do |format|

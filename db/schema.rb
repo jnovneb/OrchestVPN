@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_03_085827) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_07_210947) do
   create_table "clients", force: :cascade do |t|
     t.string "vpn"
     t.string "name"
@@ -19,6 +19,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_03_085827) do
     t.string "options"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "encrypted_password"
   end
 
   create_table "servers", force: :cascade do |t|
@@ -29,6 +30,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_03_085827) do
     t.string "CA"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "options"
   end
 
   create_table "users", force: :cascade do |t|
@@ -75,9 +77,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_03_085827) do
     t.string "clientoptions"
     t.string "VPNAdminList"
     t.string "users"
-    t.string "encrypted_password"
     t.string "vpn_admin_list"
     t.integer "bandwidth"
+    t.string "CIDR"
   end
 
   add_foreign_key "users_vpns", "users"
