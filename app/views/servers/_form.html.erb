@@ -42,8 +42,8 @@
   </div>
 
   <div class="my-5">
-  <%= form.label :dns, "DNS" %>
-  <%= select_tag 'opciones', options_for_select([['Current system resolvers', '1'], ['Self-hosted DNS(unbound)', '2'], ['Cloudflare', '3'], ['Quad9','4'],['Quad9 uncensored','5'],['FDN(France)','6'],['DNS.WATCH(Germany)','7'],['OpenDNS','8'],['Google','9'],['Yandex Basic(Russia)','10'],['AdGuard DNS','11'],['NextDNS','12'],['Write your custom DNS', '13']], 'opcion1'), id: 'opciones_select' %>
+  <%= form.label :dns_label, "DNS" %>
+  <%= form.select :dns, [['Current system resolvers', '1'], ['Self-hosted DNS(unbound)', '2'], ['Cloudflare', '3'], ['Quad9','4'], ['Quad9 uncensored','5'], ['FDN(France)','6'], ['DNS.WATCH(Germany)','7'], ['OpenDNS','8'], ['Google','9'], ['Yandex Basic(Russia)','10'], ['AdGuard DNS','11'], ['NextDNS','12'], ['Write your custom DNS', '13']], { selected: '1' }, { class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: 'opciones_select' } %>
 
   <div id="otra_opcion_input" style="display: none;">
     <%= form.label :dns, "Primary DNS" %>
