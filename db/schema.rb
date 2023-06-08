@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_07_210947) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_08_184719) do
   create_table "clients", force: :cascade do |t|
-    t.string "vpn"
+    t.string "vpnName"
     t.string "name"
     t.string "desc"
     t.string "cert"
@@ -20,6 +20,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_210947) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "encrypted_password"
+    t.integer "vpn_id", default: 1, null: false
+    t.index ["vpn_id"], name: "index_clients_on_vpn_id"
   end
 
   create_table "servers", force: :cascade do |t|
@@ -72,7 +74,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_210947) do
     t.string "encryption"
     t.string "options"
     t.string "certificate"
-    t.string "server"
     t.string "version"
     t.string "clientoptions"
     t.string "VPNAdminList"
@@ -80,8 +81,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_210947) do
     t.string "vpn_admin_list"
     t.integer "bandwidth"
     t.string "CIDR"
+    t.integer "server_id", default: 1, null: false
+    t.index ["server_id"], name: "index_vpns_on_server_id"
   end
 
+  add_foreign_key "clients", "vpns"
   add_foreign_key "users_vpns", "users"
   add_foreign_key "users_vpns", "vpns"
+  add_foreign_key "vpns", "servers"
 end

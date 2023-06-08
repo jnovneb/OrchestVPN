@@ -44,6 +44,11 @@ class VpnsController < ApplicationController
     #Esto es solo para probar
     password = "javier y pepo"
 
+
+    @vpn.server = Server.find(params[:vpn][:server_id])
+    server_id = params[:vpn][:server_id]
+    @vpn.server_id = server_id
+
     respond_to do |format|
       admin_ids = params[:vpn][:vpn_admin_list].is_a?(Array) ? params[:vpn][:vpn_admin_list].reject(&:empty?) : []
       admins = User.where(id: admin_ids)
@@ -51,9 +56,15 @@ class VpnsController < ApplicationController
       if @vpn.save
         ruta = Rails.root.join('vpn_files').to_s
         ip_servidor = @vpn.server
+        if server_id.present?
+          server = Server.find_by(id: server_id)
+          ip_servidor = server.addr if server
+        end
         puerto_servidor = @vpn.port
         cliente = @vpn.name
         ancho_banda = @vpn.bandwidth.present? ? @vpn.bandwidth : nil
+
+        puts puerto_servidor
         # Llamar al script de Bash con los argumentos recopilados
         command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/newVPN.sh #{ruta} #{cliente} #{puerto_servidor} #{ancho_banda}"
         system(command)
@@ -87,14 +98,25 @@ class VpnsController < ApplicationController
 
   # DELETE /vpns/1 or /vpns/1.json
   def destroy
+
     password = "javier y pepo"
-    nombre = @vpn.name
-    ruta = Rails.root.join('vpn_files').to_s
-    #Llamar al script de Bash con los argumentos recopilados
-    command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{nombre} #{ruta}"
-    system(command)
+    ruta = Rails.root.join('vpn_files', @vpn.name).to_s
+    
+    @vpns = Dir.glob(File.join(ruta, '*.ovpn')) # Obtener la lista de archivos .ovpn en el directorio
+    
+    @vpns.each do |archivo|
+      nombre = File.basename(archivo, '.ovpn') # Obtener el nombre del archivo sin la extensión .ovpn
+    
+      # Llamar al script de Bash con los argumentos recopilados
+      command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{nombre} #{ruta}"
+      system(command)
+    end
+    #Delete registers related in the users_vpn table
+    @vpn.users_vpns.destroy_all
     @vpn.destroy
 
+    FileUtils.rm_rf(ruta)
+    
     respond_to do |format|
       format.html { redirect_to vpns_url, notice: "Vpn was successfully destroyed." }
       format.json { head :no_content }
@@ -109,9 +131,7 @@ class VpnsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def vpn_params
-      params.require(:vpn).permit(:name, :description, :port, :server, :bandwidth, user_ids: [], vpn_admin_list: [])
+      params.require(:vpn).permit(:name, :description, :port, :server_id, :bandwidth, user_ids: [], vpn_admin_list: [])
     end
-
-    
 
 end

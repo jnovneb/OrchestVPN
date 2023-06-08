@@ -24,9 +24,13 @@ class ClientsController < ApplicationController
   def create
 
     @client = Client.new(client_params)
-    vpn = @client.vpn
+
+    @client.vpn_id = Vpn.find_by(name: @client.vpnName)&.id
+
+
+    vpnName = @client.vpnName
     name = @client.name
-    ruta = Rails.root.join('vpn_files', vpn).to_s
+    ruta = Rails.root.join('vpn_files', vpnName).to_s
     password = 'javier y pepo'
 
 
@@ -41,15 +45,15 @@ class ClientsController < ApplicationController
     system(command)
 
 
-    rt = Rails.root.join('vpn_files', vpn, name+".ovpn")
+    rt = Rails.root.join('vpn_files', vpnName, name+".ovpn")
 
     archivo = File.read(rt)
     config= archivo.match(/.*(?=<ca>)/m).to_s
     cert = archivo.scan(/<cert>(.*?)<\/cert>/m).flatten.first
 
-    @client.update_attribute(:cert, cert)
+    @client.update(cert: cert)
     
-    @client.update_attribute(:options, config)
+    @client.update(options: config)
 
 
     respond_to do |format|
@@ -101,6 +105,6 @@ class ClientsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def client_params
-      params.require(:client).permit(:vpn, :name, :desc, :cert, :options)
+      params.require(:client).permit(:vpnName, :name, :desc, :cert, :options, :vpn_id)
     end
 end

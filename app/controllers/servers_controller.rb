@@ -235,7 +235,7 @@ opciones = "#{name}\n#{address}\n#{port}\n#{protocol}\n#{dnstext}#{compresstxt}#
 
 puts opciones
 @server = Server.new(server_params)
-@server.update_attributes(options: opciones)
+@server.update(options: opciones)
 
     respond_to do |format|
       if @server.save

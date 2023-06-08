@@ -26,7 +26,7 @@ chown "$SUDO_USER:$SUDO_USER" "$clientDirec"
 
 cp /etc/openvpn/server.conf "$clientDirec/$CLIENT.conf"
 sed "s/server [0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+ 255.255.255.0/server $CIDR 255.255.255.0/" "$clientDirec/$CLIENT.conf"
-sed -i "s/port [0-9]\+/port $PORT/" "$clientDirec/$CLIENT.conf"
+sed -i "s/port [0-9]\+/port $PUERTO_SERVIDOR/" "$clientDirec/$CLIENT.conf"
 
 
 echo "VPN $CLIENT añadida."

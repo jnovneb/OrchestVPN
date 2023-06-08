@@ -8,7 +8,7 @@
 
     <%= link_to 'Edit this vpn', edit_vpn_path(@vpn), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
     <div class="inline-block ml-2">
-      <%= button_to 'Destroy this vpn', vpn_path(@vpn), method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
+      <%= button_to 'Destroy this vpn', vpn_path(@vpn), method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium", data: { confirm: 'Are you sure to delete this VPN and all of its clients?' }, onclick: "return confirm('Are you sure to delete this VPN and all of its clients?');" %>
     </div>
     <%= link_to 'Back to vpns', vpns_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
   </div>
