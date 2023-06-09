@@ -60,12 +60,9 @@ Rails.application.configure do
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter     = :resque
-  # config.active_job.queue_name_prefix = "VPN_production"
+  # config.active_job.queue_name_prefix = "vpn_production"
 
   config.action_mailer.perform_caching = false
-
-  # config.action.mailer.default_url_options = {:host => "www.myhost.com"}
-
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
