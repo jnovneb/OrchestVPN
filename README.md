@@ -1,6 +1,6 @@
 # VPN orchestrator README
 
-* Ruby 3.2.2 + Rails 7.0.4.3
+* Ruby 3.2.2 + Rails 7.0.5
 
 * Devise + RSpec + factory_bot + Tailwind CSS + SQLite
 
@@ -14,6 +14,9 @@
 
 * Services (job queues, cache servers, search engines, etc.)
 
-* Deployment instructions
+* Deployment instructions:
+
+Using Capistrano. Run `cap production deploy` to deploy to production.
+
 
 * ...
