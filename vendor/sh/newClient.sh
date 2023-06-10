@@ -8,13 +8,14 @@ fi
 
 # Verificar si se proporcionaron suficientes argumentos
 if [ $# -lt 2 ]; then
-  echo "Uso: $0 <ruta> <NOMBRE_DEL_CLIENTE>"
+  echo "Uso: $0 <ruta> <NOMBRE_DEL_CLIENTE> <CONTRASEÑA OPCIONAL> <SERVER>"
   exit 1
 fi
 
 RUTA="$1"
 CLIENT="$2"
-CONTRASENA="$3"
+SERVER="$3"
+CONTRASENA="$4"
 
 
 # Verificar si el cliente ya existe
@@ -27,11 +28,13 @@ fi
 
 
 # Determinar si se utiliza tls-auth o tls-crypt
-if grep -qs "^tls-crypt" /etc/openvpn/server.conf; then
+if grep -qs "^tls-crypt" "/etc/openvpn/$SERVER.conf"; then
   TLS_SIG="1"
-elif grep -qs "^tls-auth" /etc/openvpn/server.conf; then
+elif grep -qs "^tls-auth" "/etc/openvpn/$SERVER.conf"; then
   TLS_SIG="2"
 fi
+
+echo "El valor de server es: $SERVER"
 
 # Generar el cliente utilizando easyrsa
 cd /etc/openvpn/easy-rsa/ || exit
@@ -48,7 +51,7 @@ case $CONTRASENA in
     ;;
 esac
 # Generar el archivo de configuración personalizado client.ovpn
-cp /etc/openvpn/client-template.txt "$RUTA/$CLIENT.ovpn"
+cp "/etc/openvpn/client-template-$SERVER.txt" "$RUTA/$CLIENT.ovpn"
 
 {
   echo "<ca>"

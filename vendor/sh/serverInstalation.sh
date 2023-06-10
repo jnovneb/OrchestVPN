@@ -721,6 +721,8 @@ ignore-unknown-option block-outside-dns
 setenv opt block-outside-dns # Prevent Windows 10 DNS leak
 verb 3" >>/etc/openvpn/client-template-$SERVER_NAME.txt
 
+mkdir -p $RUTASERV/VPNs
+
 	if [[ $COMPRESSION_ENABLED == "yes" ]]; then
 		echo "compress $COMPRESSION_ALG" >>/etc/openvpn/client-template-$SERVER_NAME.txt
 	fi

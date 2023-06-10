@@ -46,6 +46,7 @@ class VpnsController < ApplicationController
 
 
     @vpn.server = Server.find(params[:vpn][:server_id])
+    servername = @vpn.server.name
     server_id = params[:vpn][:server_id]
     @vpn.server_id = server_id
 
@@ -53,8 +54,11 @@ class VpnsController < ApplicationController
       admin_ids = params[:vpn][:vpn_admin_list].is_a?(Array) ? params[:vpn][:vpn_admin_list].reject(&:empty?) : []
       admins = User.where(id: admin_ids)
       params[:vpn][:vpn_admin_list] = admins if admins.present?
+      cidr = params[:vpn][:CIDR]
+      puts servername
+      puts cidr
       if @vpn.save
-        ruta = Rails.root.join('vpn_files').to_s
+        ruta = Rails.root.join('vpn_files', servername, 'VPNs').to_s
         ip_servidor = @vpn.server
         if server_id.present?
           server = Server.find_by(id: server_id)
@@ -65,7 +69,7 @@ class VpnsController < ApplicationController
         ancho_banda = @vpn.bandwidth.present? ? @vpn.bandwidth : nil
 
         # Llamar al script de Bash con los argumentos recopilados
-        command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/newVPN.sh #{ruta} #{cliente} #{puerto_servidor} #{ancho_banda}"
+        command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/newVPN.sh #{ruta} #{cliente} #{puerto_servidor} #{cidr} #{servername} #{ancho_banda}"
         system(command)
         # Actualizar el parámetro admin_vpn para el usuario actual
         current_user_vpn = @vpn.users_vpns.find_by(user_id: current_user.id)

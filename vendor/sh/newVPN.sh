@@ -17,6 +17,8 @@ RUTA="$1"
 CLIENT="$2"
 PUERTO_SERVIDOR="$3"
 CIDR="$4"
+SERVER="$5"
+ANCHO_DE_BANDA="$6"
 
 # Crear la carpeta del cliente con los permisos adecuados
 clientDirec="$RUTA/$CLIENT"
@@ -24,7 +26,7 @@ mkdir -p "$clientDirec"
 chmod 755 "$clientDirec"
 chown "$SUDO_USER:$SUDO_USER" "$clientDirec"
 
-cp /etc/openvpn/server.conf "$clientDirec/$CLIENT.conf"
+cp "/etc/openvpn/$SERVER.conf" "$clientDirec/$CLIENT.conf"
 sed "s/server [0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+ 255.255.255.0/server $CIDR 255.255.255.0/" "$clientDirec/$CLIENT.conf"
 sed -i "s/port [0-9]\+/port $PUERTO_SERVIDOR/" "$clientDirec/$CLIENT.conf"
 
