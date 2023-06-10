@@ -69,6 +69,7 @@ group :development, :test do
   gem 'rubocop', require: false
   gem 'brakeman'
   gem 'bundler-audit'
+  gem 'simplecov', require: false
 end
 
 group :development do
