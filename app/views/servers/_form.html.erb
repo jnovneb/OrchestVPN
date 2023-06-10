@@ -124,13 +124,13 @@
   $(document).ready(function() {
     $('.encryption-btn').click(function() {
       $('#encryption-select').show();
-      if ($('#certificate-select').val() === 'ECDSA') {
+      if ($('#certificate-select').val() === '1') {
         $('#certificate2-select').show();
         $('#certificate3-select').hide();
       } else {
         $('#certificate2-select').hide();
       }
-      if ($('#certificate-select').val() === 'RSA') {
+      if ($('#certificate-select').val() === '2') {
         $('#certificate3-select').show();
       } else {
         $('#certificate3-select').hide();
@@ -142,15 +142,20 @@
     });
 
     $('#certificate-select').change(function() {
-      if ($(this).val() === 'ECDSA') {
+      if ($(this).val() === '1') {
         $('#certificate2-select').show();
+        $('#cipher_choice').show();
       } else {
         $('#certificate2-select').hide();
+        $('#cipher_choice').hide();
       }
-      if ($(this).val() === 'RSA') {
+      if ($(this).val() === '2') {
         $('#certificate3-select').show();
+        $('#cipher_choice2').show();
+
       } else {
         $('#certificate3-select').hide();
+        $('#cipher_choice2').hide();
       }
     });
   });
@@ -158,35 +163,13 @@
 
 <div class="my-5">
   <%= form.label :control_cipher, "Choose which cipher you want to use for the control channel" %>
-  <%= form.select :control_cipher, [['ECDHE-ECDSA-AES-128-GCM-SHA256(recommended)', '1'], ['ECDHE-ECDSA-AES-256-GCM-SHA384', '2']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: "cipher_select" %>
-  <div id="cipher_choice" >
-    <%= form.label :control_cipher, "Control channel cipher" %>
-    <%= form.select :control_channel_cipher, [['ECDHE-RSA-AES-128-GCM-SHA256(recommended)', '1'], ['ECDHE-RSA-AES-256-GCM-SHA384', '2']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: "cipher-choice" %>
-  </div>
-  <div id="cipher_choice2" style="display: none;">
-    <%= form.label :control_cipher, "Control channel cipher" %>
-    <%= form.select :control_channel_cipher2, [['TLS-ECDHE-RSA-WITH-AES-128-GCM-SHA256(recommended)', '1'], ['TLS-ECDHE-RSA-WITH-AES-256-GCM-SHA384', '2']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: "cipher-choice2" %>
+  <div id="cipher_choice">
+    <%= form.select :control_cipher, [['ECDHE-ECDSA-AES-128-GCM-SHA256(recommended)', '1'], ['ECDHE-ECDSA-AES-256-GCM-SHA384', '2']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: "cipher_choice" %>
+    </div>
+  <div id="cipher_choice2"  style="display: none;">
+    <%= form.select :control_cipher, [['ECDHE-RSA-AES-128-GCM-SHA256(recommended)', '1'], ['ECDHE-RSA-AES-256-GCM-SHA384', '2']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: "cipher-choice2" %>
   </div>
 </div>
-
-<script>
-  $(document).ready(function() {
-    $('#cipher_select').change(function() {
-      var selectedOption = $(this).val();
-      
-      if (selectedOption === 'SHA-256') {
-        $('#cipher_choice').show();
-        $('#cipher_choice2').hide();
-      } else if (selectedOption === 'SHA384') {
-        $('#cipher_choice').hide();
-        $('#cipher_choice2').show();
-      } else {
-        $('#cipher_choice').hide();
-        $('#cipher_choice2').hide();
-      }
-    });
-  });
-</script>
 
 
 <div class="my-5">

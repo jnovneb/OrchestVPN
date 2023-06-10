@@ -37,8 +37,6 @@ class ServersController < ApplicationController
     compress_encrypt = params[:server][:compression_options_enc]
     key_size_encrypt = params[:server][:compression_options_key]
     control_cipher = params[:server][:control_cipher]
-    control_channel = params[:server][:control_channel_cipher]
-    control_channel2 = params[:server][:control_channel_cipher2]
     diffie_hellman = params[:server][:diffie_hellman]
     control_cipherDH = params[:server][:control_cipherDH]
     control_cipherDH2 = params[:server][:control_cipherDH2]
@@ -146,34 +144,26 @@ else
 end
 
 controlCiphertxt = "Cipher for the control channel: "
-case control_cipher
-when "1"
-  controlCiphertxt += "ECDHE-ECDSA-AES-128-GCM-SHA256\n"
-when "2"
-  controlCiphertxt += "ECDHE-ECDSA-AES-256-GCM-SHA384\n"
-else
-  controlCiphertxt = "\n"
+if encrypt_cert =="1"
+  case control_cipher
+  when "1"
+    controlCiphertxt += "ECDHE-ECDSA-AES-128-GCM-SHA256\n"
+  when "2"
+    controlCiphertxt += "ECDHE-ECDSA-AES-256-GCM-SHA384\n"
+  else
+    controlCiphertxt = "\n"
+  end
+else 
+  case control_cipher
+  when "1"
+    controlCiphertxt += "ECDHE-RSA-AES-128-GCM-SHA256\n"
+  when "2"
+    controlCiphertxt += "ECDHE-RSA-AES-256-GCM-SHA384\n"
+  else
+    controlCiphertxt = "\n"
+  end
 end
 
-controlCipherChanneltxt = "Cipher channel: "
-case control_channel
-when "1"
-  controlCipherChanneltxt += "ECDHE-RSA-AES-128-GCM-SHA256\n"
-when "2"
-  controlCipherChanneltxt += "ECDHE-RSA-AES-256-GCM-SHA384\n"
-else
-  controlCipherChanneltxt = "\n"
-end
-
-controlCipherChannel2txt = "Cipher channel: "
-case control_channel2
-when "1"
-  controlCipherChannel2txt += "TLS-ECDHE-RSA-WITH-AES-128-GCM-SHA256\n"
-when "2"
-  controlCipherChannel2txt += "TLS-ECDHE-RSA-WITH-AES-128-GCM-SHA256\n"
-else
-  controlCipherChannel2txt = "\n"
-end
 
 dhtxt = "Diffie-Hellman key: "
 case diffie_hellman
@@ -231,9 +221,20 @@ else
   tlstxt = "\n"
 end
 
-opciones = "#{name}\n#{address}\n#{port}\n#{protocol}\n#{dnstext}#{compresstxt}#{encrypttxt}#{curveencrypttxt}#{sizekeytxt}#{controlCiphertxt}#{controlCipherChanneltxt}#{controlCipherChannel2txt}#{dhtxt}#{dhopttxt}#{dhopttxt2}#{digesttxt}#{tlstxt}"
+opciones = "#{name}\n#{address}\n#{port}\n#{protocol}\n#{dnstext}#{compresstxt}#{encrypttxt}#{curveencrypttxt}#{sizekeytxt}#{controlCiphertxt}#{dhtxt}#{dhopttxt}#{dhopttxt2}#{digesttxt}#{tlstxt}"
 
 puts opciones
+password = "javier y pepo"
+ruta = Rails.root.join('vpn_files').to_s
+
+
+# Llamar al script de Bash con los argumentos recopilados
+command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/serverInstalation.sh #{ruta} #{name} #{address} #{accept_IPV6} #{port} #{protocol} #{dns} #{primarydns} #{secondarydns}
+#{compressbtn} #{compression} #{encryptbtn} #{encrypt} #{encrypt_cert} #{compress_encrypt} #{key_size_encrypt} #{control_cipher} #{diffie_hellman} #{control_cipherDH}
+#{control_cipherDH2} #{digest_algorithm} #{tls_sig}"
+
+system(command)
+
 @server = Server.new(server_params)
 @server.update(options: opciones)
 

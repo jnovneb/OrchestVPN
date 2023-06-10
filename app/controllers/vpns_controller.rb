@@ -64,7 +64,6 @@ class VpnsController < ApplicationController
         cliente = @vpn.name
         ancho_banda = @vpn.bandwidth.present? ? @vpn.bandwidth : nil
 
-        puts puerto_servidor
         # Llamar al script de Bash con los argumentos recopilados
         command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/newVPN.sh #{ruta} #{cliente} #{puerto_servidor} #{ancho_banda}"
         system(command)
