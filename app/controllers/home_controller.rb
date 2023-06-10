@@ -5,9 +5,9 @@ class HomeController < ApplicationController
 
   def index
     if current_user.admin
-      @vpns = Vpn.all
+      @clients = Client.all
     else
-      @user_vpns = current_user.vpns
+      @clients_vpns = Client.where(vpn_id: current_user.vpns.pluck(:id))
     end
   end
 
@@ -24,9 +24,9 @@ class HomeController < ApplicationController
   end
 
   def connect
-    vpn_id = params[:vpn_id]
+    client_id = params[:client_id]
       # Guarda el nombre de la VPN y luego la ruta del archivo de configuración
-      nombre = Vpn.find(vpn_id).name
+      nombre = Client.find(client_id).name
       ruta = Rails.root.join('vpn_files', "#{nombre}", "#{nombre}.ovpn").to_s
       # Verifica si el archivo existe antes de enviarlo como descarga adjunta
       if File.exist?(ruta)

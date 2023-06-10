@@ -14,38 +14,38 @@
     </thead>
     <tbody>
     <% if current_user.admin %>
-      <% @vpns.each do |vpn| %>
+      <% @clients.each do |client| %>
         <tr>
-          <td><%= vpn[:name] %></td>
-          <td><%= vpn[:description] %></td>
+          <td><%= client[:name] %></td>
+          <td><%= client[:desc] %></td>
           <% if current_user.admin_vpn %>
             <td>Admin</td>
           <% else %>
             <td>User</td>
           <% end %>
           <td>
-            <%= button_to "Connect", connect_path(vpn_id: vpn.id), class: "btn" %>
+            <%= button_to "Connect", connect_path(client_id: client.id), class: "btn" %>
           </td>
-          <td><%= vpn[:settings] %></td>
+          <td><%= client[:options] %></td>
           <% if current_user.admin %>
-            <td><%= vpn[:monitore] %></td>
+            <td><%= client[:monitore] %></td>
           <% end %>
         </tr>
       <% end %>
     <% else %>
-      <% @user_vpns.each do |vpn| %>
+      <% @clients_vpns.each do |client| %>
         <tr>
-          <td><%= vpn[:name] %></td>
-          <td><%= vpn[:description] %></td>
+          <td><%= client[:name] %></td>
+          <td><%= client[:desc] %></td>
           <% if current_user.admin_vpn %>
             <td>Admin</td>
           <% else %>
             <td>User</td>
           <% end %>
           <td>
-            <%= button_to "Connect", connect_path(vpn_id: vpn.id), class: "btn" %>
+            <%= button_to "Connect", connect_path(client_id: client.id), class: "btn" %>
           </td>
-          <td><%= vpn[:settings] %></td>
+          <td><%= client[:options] %></td>
         </tr>
       <% end %>
     <% end %>
