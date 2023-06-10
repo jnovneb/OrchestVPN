@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :client do
-    vpn { "MyString" }
-    name { "MyString" }
-    desc { "MyString" }
-    cert { "MyString" }
-    options { "MyString" }
+    vpn { 'vpn' }
+    name { 'vpn name' }
+    desc { 'vpn description' }
+    cert { 'vpn certificate' }
+    options { 'vpn options string' }
   end
 end
