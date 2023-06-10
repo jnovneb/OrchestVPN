@@ -1,7 +1,15 @@
 	#!/bin/bash
 	
+	RUTA="$1"
+
 	echo "Enter a name"
-	NAME="$1"
+	NAME="$2"
+	
+	RUTASERV="$RUTA/$NAME"
+
+	mkdir -p "$RUTASERV"
+
+
 
 	# Detect public IPv4 address and pre-fill for the user
 	IP=$(ip -4 addr | sed -ne 's|^.* inet \([^/]*\)/.* scope global.*$|\1|p' | head -1)
@@ -12,7 +20,7 @@
 	fi
 	APPROVE_IP=${APPROVE_IP:-n}
 	if [[ $APPROVE_IP =~ n ]]; then
-		IP="$2"
+		IP="$3"
 	fi
 	# If $IP is a private IP address, the server must be behind NAT
 	if echo "$IP" | grep -qE '^(10\.|172\.1[6789]\.|172\.2[0-9]\.|172\.3[01]\.|192\.168)'; then
@@ -21,9 +29,9 @@
 		echo "We need it for the clients to connect to the server."
 
 		PUBLICIP=$(curl -s https://api.ipify.org)
-		until [[ $ENDPOINT != "" ]]; do
-			ENDPOINT="$3"
-		done
+
+	ENDPOINT="$3"
+
 	fi
 
 	echo ""
@@ -55,7 +63,6 @@
 	echo "   1) UDP"
 	echo "   2) TCP"
 	PROTOCOL="$6"
-	esac
 	echo ""
 	echo "What DNS resolvers do you want to use with the VPN?"
 	echo "   1) Current system resolvers (from /etc/resolv.conf)"
@@ -71,29 +78,27 @@
 	echo "   11) AdGuard DNS (Anycast: worldwide)"
 	echo "   12) NextDNS (Anycast: worldwide)"
 	echo "   13) Custom"
-	until [[ $DNS =~ ^[0-9]+$ ]] && [ "$DNS" -ge 1 ] && [ "$DNS" -le 13 ]; do
-	    DNS="$7"
-	    DNS1=""
-	    DNS2=""
-	    if [[ $DNS == "13" ]]; then
-	        DNS1="$8"
-	        DNS2="$9"
-	        if [[ $DNS2 == "" ]]; then
-	            break
-	        fi
+	DNS="$7"
+    DNS1=""
+    DNS2=""
+    if [[ $DNS == "13" ]]; then
+	    DNS1="$8"
+        DNS2="$9"
+        if [[ $DNS2 == "" ]]; then
+	        break
 	    fi
-	done
+    fi
 
 	echo ""
 	echo "Do you want to use compression? It is not recommended since the VORACLE attack makes use of it."
-	COMPRESSION_ENABLED="$9"
+	COMPRESSION_ENABLED="$10"
 	if [[ $COMPRESSION_ENABLED == "yes" ]]; then
 		echo "Choose which compression algorithm you want to use: (they are ordered by efficiency)"
 		echo "   1) LZ4-v2"
 		echo "   2) LZ4"
 		echo "   3) LZ0"
 		until [[ $COMPRESSION_CHOICE =~ ^[1-3]$ ]]; do
-			COMPRESSION_CHOICE="$10"
+			COMPRESSION_CHOICE="$11"
 		done
 		case $COMPRESSION_CHOICE in
 		1)
@@ -113,7 +118,7 @@
 	echo "Note that whatever you choose, all the choices presented in the script are safe. (Unlike OpenVPN's defaults)"
 	echo "See https://github.com/angristan/openvpn-install#security-and-encryption to learn more."
 	echo ""
-	CUSTOMIZE_ENC="$11"
+	CUSTOMIZE_ENC="$12"
 	if [[ $CUSTOMIZE_ENC == "no" ]]; then
 		# Use default, sane and fast parameters
 		CIPHER="AES-128-GCM"
@@ -133,7 +138,7 @@
 		echo "   4) AES-128-CBC"
 		echo "   5) AES-192-CBC"
 		echo "   6) AES-256-CBC"
-		CIPHER_CHOICE="$12"
+		CIPHER_CHOICE="$13"
 		case $CIPHER_CHOICE in
 		1)
 			CIPHER="AES-128-GCM"
@@ -158,7 +163,7 @@
 		echo "Choose what kind of certificate you want to use:"
 		echo "   1) ECDSA (recommended)"
 		echo "   2) RSA"
-		CERT_TYPE="$13"
+		CERT_TYPE="$14"
 		case $CERT_TYPE in
 		1)
 			echo ""
@@ -166,7 +171,7 @@
 			echo "   1) prime256v1 (recommended)"
 			echo "   2) secp384r1"
 			echo "   3) secp521r1"
-			CERT_CURVE_CHOICE="$14"
+			CERT_CURVE_CHOICE="$15"
 			case $CERT_CURVE_CHOICE in
 			1)
 				CERT_CURVE="prime256v1"
@@ -185,7 +190,7 @@
 			echo "   1) 2048 bits (recommended)"
 			echo "   2) 3072 bits"
 			echo "   3) 4096 bits"
-			RSA_KEY_SIZE_CHOICE="$15"
+			RSA_KEY_SIZE_CHOICE="$16"
 			case $RSA_KEY_SIZE_CHOICE in
 			1)
 				RSA_KEY_SIZE="2048"
@@ -205,7 +210,7 @@
 		1)
 			echo "   1) ECDHE-ECDSA-AES-128-GCM-SHA256 (recommended)"
 			echo "   2) ECDHE-ECDSA-AES-256-GCM-SHA384"
-			CC_CIPHER_CHOICE="$16"
+			CC_CIPHER_CHOICE="$17"
 			case $CC_CIPHER_CHOICE in
 			1)
 				CC_CIPHER="TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256"
@@ -324,43 +329,6 @@
 		exit 1
 	fi
 
-	# If OpenVPN isn't installed yet, install it. This script is more-or-less
-	# idempotent on multiple runs, but will only install OpenVPN from upstream
-	# the first time.
-	if [[ ! -e /etc/openvpn/server.conf ]]; then
-		if [[ $OS =~ (debian|ubuntu) ]]; then
-			apt-get update
-			apt-get -y install ca-certificates gnupg
-			# We add the OpenVPN repo to get the latest version.
-			if [[ $VERSION_ID == "16.04" ]]; then
-				echo "deb http://build.openvpn.net/debian/openvpn/stable xenial main" >/etc/apt/sources.list.d/openvpn.list
-				wget -O - https://swupdate.openvpn.net/repos/repo-public.gpg | apt-key add -
-				apt-get update
-			fi
-			# Ubuntu > 16.04 and Debian > 8 have OpenVPN >= 2.4 without the need of a third party repository.
-			apt-get install -y openvpn iptables openssl wget ca-certificates curl
-		elif [[ $OS == 'centos' ]]; then
-			yum install -y epel-release
-			yum install -y openvpn iptables openssl wget ca-certificates curl tar 'policycoreutils-python*'
-		elif [[ $OS == 'oracle' ]]; then
-			yum install -y oracle-epel-release-el8
-			yum-config-manager --enable ol8_developer_EPEL
-			yum install -y openvpn iptables openssl wget ca-certificates curl tar policycoreutils-python-utils
-		elif [[ $OS == 'amzn' ]]; then
-			amazon-linux-extras install -y epel
-			yum install -y openvpn iptables openssl wget ca-certificates curl
-		elif [[ $OS == 'fedora' ]]; then
-			dnf install -y openvpn iptables openssl wget ca-certificates curl policycoreutils-python-utils
-		elif [[ $OS == 'arch' ]]; then
-			# Install required dependencies and upgrade the system
-			pacman --needed --noconfirm -Syu openvpn iptables openssl wget ca-certificates curl
-		fi
-		# An old version of easy-rsa was available by default in some openvpn packages
-		if [[ -d /etc/openvpn/easy-rsa/ ]]; then
-			rm -rf /etc/openvpn/easy-rsa/
-		fi
-	fi
-
 	# Find out if the machine uses nogroup or nobody for the permissionless group
 	if grep -qs "^nogroup:" /etc/group; then
 		NOGROUP=nogroup
@@ -430,7 +398,7 @@
 		# Generate a random, alphanumeric identifier of 16 characters for CN and one for server name
 		SERVER_CN="cn_$(head /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)"
 		echo "$SERVER_CN" >SERVER_CN_GENERATED
-		SERVER_NAME="server_$(head /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)"
+		SERVER_NAME="$NAME"
 		echo "$SERVER_NAME" >SERVER_NAME_GENERATED
 
 
@@ -453,7 +421,6 @@
 			;;
 		esac
 
-	RUTA="$23"
 	#Creating the folder of the server
 	mkdir /etc/openvpn/$NAME
 	
@@ -461,6 +428,8 @@
 
 	# Move all the generated files
 	cp pki/ca.crt pki/private/ca.key "pki/issued/$SERVER_NAME.crt" "pki/private/$SERVER_NAME.key" /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn
+	cp "pki/issued/$SERVER_NAME.crt" "$RUTASERV/$SERVER_NAME.crt" 
+	cp "pki/private/$SERVER_NAME.key" "$RUTASERV/$SERVER_NAME.key"
 	if [[ $DH_TYPE == "2" ]]; then
 		cp dh.pem /etc/openvpn
 	fi
@@ -470,9 +439,9 @@
 
 	# Generate server.conf
 	echo "port $PORT" >/etc/openvpn/$NAME.conf
-	if [[ $IPV6_SUPPORT == 'n' ]]; then
+	if [[ $IPV6_SUPPORT == 'no' ]]; then
 		echo "proto $PROTOCOL" >>/etc/openvpn/$NAME.conf
-	elif [[ $IPV6_SUPPORT == 'y' ]]; then
+	elif [[ $IPV6_SUPPORT == 'yes' ]]; then
 		echo "proto ${PROTOCOL}6" >>/etc/openvpn/$NAME.conf
 	fi
 
@@ -600,7 +569,10 @@ tls-version-min 1.2
 tls-cipher $CC_CIPHER
 client-config-dir /etc/openvpn/ccd
 status /var/log/openvpn/status.log
-verb 3" >>/etc/openvpn/server.conf
+verb 3" >>/etc/openvpn/$SERVER_NAME.conf
+
+
+cp "/etc/openvpn/$SERVER_NAME.conf" "$RUTASERV/$SERVER_NAME.conf"
 
 	# Create client-config-dir dir
 	mkdir -p /etc/openvpn/ccd
@@ -635,8 +607,8 @@ verb 3" >>/etc/openvpn/server.conf
 		sed -i 's|/etc/openvpn/server|/etc/openvpn|' /etc/systemd/system/openvpn-server@.service
 
 		systemctl daemon-reload
-		systemctl enable openvpn-server@server
-		systemctl restart openvpn-server@server
+		systemctl enable openvpn-server@$SERVER_NAME
+		systemctl restart openvpn-server@$SERVER_NAME
 	elif [[ $OS == "ubuntu" ]] && [[ $VERSION_ID == "16.04" ]]; then
 		# On Ubuntu 16.04, we use the package from the OpenVPN repo
 		# This package uses a sysvinit service
@@ -652,8 +624,8 @@ verb 3" >>/etc/openvpn/server.conf
 		sed -i 's|/etc/openvpn/server|/etc/openvpn|' /etc/systemd/system/openvpn\@.service
 
 		systemctl daemon-reload
-		systemctl enable openvpn@server
-		systemctl restart openvpn@server
+		systemctl enable openvpn@$SERVER_NAME
+		systemctl restart openvpn@$SERVER_NAME
 	fi
 
 	if [[ $DNS == 2 ]]; then
@@ -669,14 +641,14 @@ verb 3" >>/etc/openvpn/server.conf
 	iptables -I INPUT 1 -i tun0 -j ACCEPT
 	iptables -I FORWARD 1 -i $NIC -o tun0 -j ACCEPT
 	iptables -I FORWARD 1 -i tun0 -o $NIC -j ACCEPT
-	iptables -I INPUT 1 -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT" >/etc/iptables/add-openvpn-rules.sh
+	iptables -I INPUT 1 -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT" >/etc/iptables/add-openvpn-rules-$SERVER_NAME.sh
 
 	if [[ $IPV6_SUPPORT == 'yes' ]]; then
 		echo "ip6tables -t nat -I POSTROUTING 1 -s fd42:42:42:42::/112 -o $NIC -j MASQUERADE
 	ip6tables -I INPUT 1 -i tun0 -j ACCEPT
 	ip6tables -I FORWARD 1 -i $NIC -o tun0 -j ACCEPT
 	ip6tables -I FORWARD 1 -i tun0 -o $NIC -j ACCEPT
-	ip6tables -I INPUT 1 -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT" >>/etc/iptables/add-openvpn-rules.sh
+	ip6tables -I INPUT 1 -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT" >>/etc/iptables/add-openvpn-rules-$SERVER_NAME.sh
 	fi
 
 	# Script to remove rules
@@ -685,18 +657,18 @@ verb 3" >>/etc/openvpn/server.conf
 	iptables -D INPUT -i tun0 -j ACCEPT
 	iptables -D FORWARD -i $NIC -o tun0 -j ACCEPT
 	iptables -D FORWARD -i tun0 -o $NIC -j ACCEPT
-	iptables -D INPUT -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT" >/etc/iptables/rm-openvpn-rules.sh
+	iptables -D INPUT -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT" >/etc/iptables/rm-openvpn-rules-$SERVER_NAME.sh
 
 	if [[ $IPV6_SUPPORT == 'yes' ]]; then
 		echo "ip6tables -t nat -D POSTROUTING -s fd42:42:42:42::/112 -o $NIC -j MASQUERADE
 	ip6tables -D INPUT -i tun0 -j ACCEPT
 	ip6tables -D FORWARD -i $NIC -o tun0 -j ACCEPT
 	ip6tables -D FORWARD -i tun0 -o $NIC -j ACCEPT
-	ip6tables -D INPUT -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT" >>/etc/iptables/rm-openvpn-rules.sh
+	ip6tables -D INPUT -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT" >>/etc/iptables/rm-openvpn-rules-$SERVER_NAME.sh
 	fi
 
-	chmod +x /etc/iptables/add-openvpn-rules.sh
-	chmod +x /etc/iptables/rm-openvpn-rules.sh
+	chmod +x /etc/iptables/add-openvpn-rules-$SERVER_NAME.sh
+	chmod +x /etc/iptables/rm-openvpn-rules-$SERVER_NAME.sh
 
 	# Handle the rules via a systemd script
 	echo "[Unit]
@@ -724,12 +696,12 @@ WantedBy=multi-user.target" >/etc/systemd/system/iptables-openvpn.service
 	fi
 
 	# client-template.txt is created so we have a template to add further users later
-	echo "client" >/etc/openvpn/client-template.txt
+	echo "client" >/etc/openvpn/client-template-$SERVER_NAME.txt
 	if [[ $PROTOCOL == 'udp' ]]; then
-		echo "proto udp" >>/etc/openvpn/client-template.txt
-		echo "explicit-exit-notify" >>/etc/openvpn/client-template.txt
+		echo "proto udp" >>/etc/openvpn/client-template-$SERVER_NAME.txt
+		echo "explicit-exit-notify" >>/etc/openvpn/client-template-$SERVER_NAME.txt
 	elif [[ $PROTOCOL == 'tcp' ]]; then
-		echo "proto tcp-client" >>/etc/openvpn/client-template.txt
+		echo "proto tcp-client" >>/etc/openvpn/client-template-$SERVER_NAME.txt
 	fi
 	echo "remote $IP $PORT
 dev tun
@@ -747,10 +719,11 @@ tls-version-min 1.2
 tls-cipher $CC_CIPHER
 ignore-unknown-option block-outside-dns
 setenv opt block-outside-dns # Prevent Windows 10 DNS leak
-verb 3" >>/etc/openvpn/client-template-$NAME.txt
+verb 3" >>/etc/openvpn/client-template-$SERVER_NAME.txt
 
 	if [[ $COMPRESSION_ENABLED == "yes" ]]; then
-		echo "compress $COMPRESSION_ALG" >>/etc/openvpn/client-template.txt
+		echo "compress $COMPRESSION_ALG" >>/etc/openvpn/client-template-$SERVER_NAME.txt
+	fi
 	fi
 
 function installUnbound() {
