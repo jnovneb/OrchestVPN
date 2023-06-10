@@ -8,12 +8,11 @@
 
 * Configuration
 
-* Database creation
-
-* Database initialization
+* DATABASE:
+  Using SQLite. Run `rails db:migrate` to migrate database.
 
 * TESTING:
-  How to run the test suite
+  Using RSpec. Run `rspec` to run all tests.
 
 * Services (job queues, cache servers, search engines, etc.)
 

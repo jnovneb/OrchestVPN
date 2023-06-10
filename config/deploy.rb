@@ -1,8 +1,12 @@
 # config valid for current version and patch releases of Capistrano
 lock "~> 3.17.3"
 
-set :application, "my_app_name"
-set :repo_url, "git@example.com:me/my_repo.git"
+set :application, 'VPN-Orchestrator'
+set :repo_url, 'git@github.com:jnovneb/OrchestVPN.git'
+
+set :puma_systemctl_user, :system
+set :puma_access_log,     "#{fetch(:deploy_to)}/shared/log/puma_access.log"
+set :puma_error_log,      "#{fetch(:deploy_to)}/shared/log/puma_error.log"
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
@@ -37,3 +41,6 @@ set :repo_url, "git@example.com:me/my_repo.git"
 
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
+
+set :rvm_ruby_version, 'ruby-3.2.2'
+set :default_env, { rvm_bin_path: '/usr/local/rvm/bin' }
