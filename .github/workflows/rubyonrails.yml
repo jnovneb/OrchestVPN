@@ -43,12 +43,11 @@ jobs:
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@55283cc23133118229fd3f97f9336ee23a179fcf # v1.146.0
         with:
-          ruby-version: 3.2.2
           bundler-cache: true
       # Add or replace any other lints here
-      - name: Lint Ruby files
-        run: rubocop --parallel
       - name: Security audit dependencies
-        run: bundler-audit --update
+        run: bin/bundler-audit --update
       - name: Security audit application code
-        run: brakeman -q -w2
+        run: bin/brakeman -q -w2
+      - name: Lint Ruby files
+        run: bin/rubocop --parallel
