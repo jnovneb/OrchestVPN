@@ -14,11 +14,23 @@ Rails.application.routes.draw do
   get '/settings', to: 'settings#index', as: 'settings'
   get '/monitoring', to: 'monitoring#index', as: 'monitoring'
   get '/ejecutar', to:'ejecutar#index', as:'ejecutar'
+  delete '/users', to: 'users#destroy', as: 'delete_users'
+
+  post 'addusersvpn', to: 'users#addusersvpn', as: 'addusersvpn'
+
+  post '/delusersvpn', to: 'users#delusersvpn', as: 'delusersvpn'
+
+  get '/users/options', to: 'users#options'
+
+
 
   resources :users do
     member do
       patch :move_to_admins
       patch :move_to_non_admins
+      post :add_user_to_vpn
+      post :delete_user_from_vpn
     end
+    delete :destroy, on: :collection
   end
 end

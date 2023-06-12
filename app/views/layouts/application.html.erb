@@ -12,6 +12,7 @@
     <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- <%= javascript_include_tag "application" %> -->
+    <%= javascript_include_tag 'rails-ujs' %>
     <%= javascript_importmap_tags %>
   </head>
 
@@ -27,9 +28,11 @@
           <li><%= link_to "Home", home_path, class: "btn active:bg-violet-1000 focus:outline-none focus:ring focus:ring-violet-600" %></li>
           <li><%= link_to "VPN", vpns_path %></li>
           <% if current_user.admin %>
-            <li><%= link_to "Users", users_path %></li>
             <li><%= link_to "Servers", servers_path %></li>
           <% end%>
+          <% if current_user.admin || current_user.users_vpns.exists?(admin_vpn: true)%>
+            <li><%= link_to "Users", users_path %></li>
+          <% end %>
           <li><%= link_to "Contact", contact_path %></li>
         <%else %>
           <li><a>Home</a></li>
@@ -46,9 +49,11 @@
           <li><%= link_to "Home", home_path %></li>
           <li><%= link_to "VPN", vpns_path %></li>
           <% if current_user.admin %>
-            <li><%= link_to "Users", users_path %></li>
             <li><%= link_to "Servers", servers_path %></li>
           <% end%>
+          <% if current_user.admin || current_user.users_vpns.exists?(admin_vpn: true)%>
+          <li><%= link_to "Users", users_path %></li>
+        <% end %>
           <li><%= link_to "Contact", contact_path%></li>
           </li>
 

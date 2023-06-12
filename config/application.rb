@@ -35,3 +35,5 @@ module VPN
     config.generators.system_tests = nil
   end
 end
+config.middleware.use ActionDispatch::Cookies
+

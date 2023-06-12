@@ -5,6 +5,9 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
+
+  before_destroy :cleanup_users_vpns
+
   
 
 
@@ -29,4 +32,9 @@ class User < ApplicationRecord
     signed_in? ? current_user.admin_vpn : false
   end
 
+  private
+
+  def cleanup_users_vpns
+    users_vpns.destroy_all
+  end
 end
