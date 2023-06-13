@@ -4,13 +4,13 @@
   <ul class="flex flex-wrap -mb-px" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
     <% if current_user.admin %>
       <li class="mr-2" role="presentation">
-        <%= button_tag class: "inline-block text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium text-center border-transparent border-b-2 dark:text-gray-400 dark:hover:text-gray-300 active", id: "new-tab", "data-tabs-target": "#new", type: "button", role: "tab", "aria-controls": "profile", "aria-selected": true do %>
-          Modify admin
+        <%= button_tag class: "inline-block text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium text-center border-transparent border-b-2 dark:text-gray-400 dark:hover:text-gray-300 active", id: "delete-tab", "data-tabs-target": "#delete", type: "button", role: "tab", "aria-controls": "delete", "aria-selected": true do %>
+          Display users
         <% end %>
       </li>
       <li class="mr-2" role="presentation">
-        <%= button_tag class: "inline-block text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium text-center border-transparent border-b-2 dark:text-gray-400 dark:hover:text-gray-300", id: "delete-tab", "data-tabs-target": "#delete", type: "button", role: "tab", "aria-controls": "delete", "aria-selected": false do %>
-          Delete users
+        <%= button_tag class: "inline-block text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium text-center border-transparent border-b-2 dark:text-gray-400 dark:hover:text-gray-300", id: "new-tab", "data-tabs-target": "#new", type: "button", role: "tab", "aria-controls": "profile", "aria-selected": false do %>
+          Modify admin
         <% end %>
       </li>
       <li class="mr-2" role="presentation">
@@ -45,67 +45,58 @@
 
 <div id="myTabContent">
   <% if current_user.admin %>
-    <div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800" id="new" role="tabpanel" aria-labelledby="profile-tab">
-      <div class="grid grid-cols-2 gap-48 justify-between">
-        <div class="flex justify-center ml-auto">
-          <div class="users-container">
-            <div class="non-admins-container">
-              <h2 class="font-bold text-6xl">Users</h2>
-              <ul id="non-admins-list" class="space-y-2">
-                <% @non_admins.each do |non_admin| %>
-                <li>
-                  <%= button_to non_admin.email, move_to_admins_user_path(non_admin), params: { selected_user_id: non_admin.id }, method: :patch, class: 'non-admin-button' %>
-                </li>
-                <% end %>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex justify-center mr-auto">
-          <div class="users-container">
-            <div class="admins-container">
-              <h2 class="font-bold text-6xl">Administrators</h2>
-              <ul id="admins-list" class="space-y-2">
-                <% @admins.each do |admin| %>
-                  <li>
-                    <%= button_to admin.email, move_to_non_admins_user_path(admin), params: { selected_user_id: admin.id }, method: :patch, class: 'admin-button' %>
-                  </li>
-                <% end %>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800 hidden" id="delete" role="tabpanel" aria-labelledby="delete-tab">
-    <%= form_tag(delete_users_path, method: :delete, class: "contents") do %>
-      <% if @user.errors.any? %>
-        <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-          <h2><%= pluralize(@user.errors.count, "error") %> prohibited this vpn from being saved:</h2>
-          <ul>
-            <% @user.errors.each do |error| %>
-              <li><%= error.full_message %></li>
-            <% end %>
-          </ul>
-        </div>
+    <div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800" id="delete" role="tabpanel" aria-labelledby="delete-tab">
+    <div class="mx-auto md:w-2/3 w-full flex">
+    <div class="mx-auto">
+      <% if notice.present? %>
+        <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
       <% end %>
-      <div class="flex flex-wrap -mx-3 mb-6">
-        <div class="w-full px-3 mb-6 md:mb-0">
-          <%= label_tag :users, "Select users to delete", class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" %>
-          <%= select_tag 'selected_user_ids[]', options_for_select(User.pluck(:email, :id), selected: @selected_user_ids), { include_blank: true, multiple: true, data: { controller: 'slim' } } %>
-          <label id="selected-users-label"></label>
+
+      <% @users.each do |user| %>
+        <%= render partial: 'user', locals: { user: user } %>
+      <% end %>
+
+  
+  </div>
+</div>
+
+    </div>
+  </div>
+
+  <div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800  hidden" id="new" role="tabpanel" aria-labelledby="profile-tab">
+    <div class="grid grid-cols-2 gap-48 justify-between">
+      <div class="flex justify-center ml-auto">
+        <div class="users-container">
+          <div class="non-admins-container">
+            <h2 class="font-bold text-6xl">Users</h2>
+            <ul id="non-admins-list" class="space-y-2">
+              <% @non_admins.each do |non_admin| %>
+              <li>
+                <%= button_to non_admin.email, move_to_admins_user_path(non_admin), params: { selected_user_id: non_admin.id }, method: :patch, class: 'non-admin-button' %>
+              </li>
+              <% end %>
+            </ul>
+          </div>
         </div>
       </div>
-      <div class="inline">
-        <%= submit_tag "Delete", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800", data: { confirm: 'Are you sure you want to delete the selected users?' } %>
+
+      <div class="flex justify-center mr-auto">
+        <div class="users-container">
+          <div class="admins-container">
+            <h2 class="font-bold text-6xl">Administrators</h2>
+            <ul id="admins-list" class="space-y-2">
+              <% @admins.each do |admin| %>
+                <li>
+                  <%= button_to admin.email, move_to_non_admins_user_path(admin), params: { selected_user_id: admin.id }, method: :patch, class: 'admin-button' %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
       </div>
-    <% end %>
     </div>
   </div>
   <% end %>
-</div>
 
 
 <div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800 hidden" id="help" role="tabpanel" aria-labelledby="settings-tab">
@@ -158,6 +149,59 @@
   <% end %>
 </div>
 
+<div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800 hidden" id="faq" role="tabpanel" aria-labelledby="contacts-tab">
+<%= form_with(model: @user, class: "contents") do |form| %>
+  <div class="flex flex-wrap -mx-3 mb-6">
+    <div class="w-full px-3 mb-6 md:mb-0">
+      <%= form.label :vpn_id, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" do %>
+        Select VPN to manage users
+      <% end %>
+      <%= form.select :vpn_id, Vpn.pluck(:name, :id), { include_blank: true }, { data: { controller: 'slim' }, selected: ['1'] } %>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap -mx-3 mb-6">
+    <div class="w-full px-3 mb-6 md:mb-0">
+      <%= form.radio_button :manage, "add", id: "admin-add-btn", class: "manage-btn", checked: true %>
+      <%= form.label :manage_add, "Add admins" %>
+
+      <%= form.radio_button :manage, "delete", id: "admin-del-btn", class: "manage-btn-del" %>
+      <%= form.label :manage_del, "Delete admins" %>
+    </div>
+  </div>
+
+  <div id="adminsadd">
+    <div class="flex flex-wrap -mx-3 mb-6">
+      <div class="w-full px-3 mb-6 md:mb-0">
+        <%= form.label :user_add_id, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" do %>
+          Select new admins to add in this VPN
+        <% end %>
+        <%= form.select :admin_add_ids, User.pluck(:email, :id), { include_blank: true }, { multiple: true, data: { controller: 'slim' }, selected: ['1'], name: 'user[user_add_ids][]' } %>
+      </div>
+    </div>
+    <div class="inline">
+      <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800", formaction: addusersvpn_path, id: "your-submit-button-id" %>
+    </div>
+  </div>
+
+  <div id="adminsdel" style="display: none;">
+    <div class="flex flex-wrap -mx-3 mb-6">
+      <div class="w-full px-3 mb-6 md:mb-0">
+        <%= form.label :user_del_id, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" do %>
+          Select admins to delete in this VPN
+        <% end %>
+          <%= form.select :admin_del_ids, User.joins(:users_vpns).where(users_vpns: { admin_vpn: true }).pluck(:email, :id), { include_blank: true }, { multiple: true, data: { controller: 'slim' }, selected: ['1'], name: 'user[user_del_ids][]' } %>
+        </div>
+    </div>
+    <div class="inline">
+      <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800", formaction: delusersvpn_path %>
+    </div>
+  </div>
+<% end %>
+</div>
+</div>
+
+
 <script>
   $(document).ready(function() {
     $('#manage-add-btn').click(function() {
@@ -180,8 +224,29 @@
   });
 </script>
 
+<script>
+$(document).ready(function() {
+  $('#admin-add-btn').click(function() {
+    $('#adminsadd').show();
+    $('#adminsdel').hide();
+  });
 
-<div class="bg-gray-50 p-4 rounded-lg dark:bg-gray-800 hidden" id="faq" role="tabpanel" aria-labelledby="contacts-tab"></div>
+  $('#admin-del-btn').click(function() {
+    $('#adminsadd').hide();
+    $('#adminsdel').show();
+  }); 
+
+  if ($('#admin-del-btn').is(':checked')) {
+    $('#adminsadd').hide();
+    $('#adminsdel').show();
+  } else {
+    $('#adminsadd').show();
+    $('#adminsdel').hide();
+  }
+});
+</script>
+
+
 
 
 
