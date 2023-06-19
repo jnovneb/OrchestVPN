@@ -2,7 +2,6 @@
   <h2 class="ml-2 mr-2"><%= user.email %></h2>
   <% if action_name != "show" %>
     <%= link_to "Show this user", user, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" , style: "font-size: 1.2em; margin-left: auto;"%>
-    <%= link_to 'Edit this user', edit_user_path(user), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium", style: "font-size: 1.2em;"%>
     <hr class="mt-6">
   <% end %>
 </div>
