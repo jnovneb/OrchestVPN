@@ -24,7 +24,7 @@
             <td>User</td>
           <% end %>
           <td>
-            <%= button_to "Connect", connect_path(client_id: client.id), class: "btn", data: { client_id: client.id, client_name: client.name } %>
+            <%= button_to "Connect", connect_path(client_id: client.id), class: "btnc", data: { client_id: client.id, client_name: client.name } %>
           </td>
           <td><%= client[:options] %></td>
           <% if current_user.admin %>
@@ -43,7 +43,7 @@
             <td>User</td>
           <% end %>
           <td>
-            <%= button_to "Connect", connect_path(client_id: client.id), class: "btn", data: { client_id: client.id, client_name: client.name } %>
+            <%= button_to "Connect", connect_path(client_id: client.id), class: "btnc", data: { client_id: client.id, client_name: client.name } %>
           </td>
           </td>
           <td><%= client[:options] %></td>
@@ -54,7 +54,7 @@
   </table>
 </div>
 <script>
-document.querySelectorAll('.btn').forEach((button) => {
+document.querySelectorAll('.btnc').forEach((button) => {
   button.addEventListener('click', (event) => {
     event.preventDefault();
     const client_id = event.target.dataset.clientId;

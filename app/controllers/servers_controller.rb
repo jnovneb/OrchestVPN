@@ -234,9 +234,20 @@ command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/serverInstala
 #{control_cipherDH2} #{digest_algorithm} #{tls_sig}"
 
 system(command)
+#MODIFICALOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+crt = Rails.root.join('vpn_files', "#{name}", "#{name}.crt").to_s
+key = Rails.root.join('vpn_files', "#{name}", "#{name}.key").to_s
+
+archivo = File.read(crt)
+cert = archivo.scan(/-----BEGIN CERTIFICATE-----(.*?)-----END CERTIFICATE-----/m).flatten.first
+
+archivo2 = File.read(key)
+hostkey = archivo2.scan(/-----BEGIN PRIVATE KEY-----(.*?)-----END PRIVATE KEY-----/m).flatten.first
 
 @server = Server.new(server_params)
 @server.update(options: opciones)
+@server.update(credentials: cert)
+@server.update(hostkey: hostkey)
 
     respond_to do |format|
       if @server.save
@@ -264,8 +275,21 @@ system(command)
 
   # DELETE /servers/1 or /servers/1.json
   def destroy
-    @server.destroy
 
+    @server.vpns.each do |vpn|
+      vpn.clients.destroy_all
+    end
+  
+    @server.vpns.destroy_all
+
+    @server.destroy
+    name = @server.name
+    password = "javier y pepo"
+    ruta = Rails.root.join('vpn_files', "#{name}").to_s
+    puts name
+    puts ruta
+    command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleServer.sh #{name} #{ruta}"
+    system(command)
     respond_to do |format|
       format.html { redirect_to servers_url, notice: "Server was successfully destroyed." }
       format.json { head :no_content }

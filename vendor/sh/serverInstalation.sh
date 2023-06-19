@@ -11,15 +11,16 @@
 
 
 
+
 	# Detect public IPv4 address and pre-fill for the user
 	IP=$(ip -4 addr | sed -ne 's|^.* inet \([^/]*\)/.* scope global.*$|\1|p' | head -1)
 
-	if [[ -z $IP ]]; then
+	if test -z "$IP"; then
 		# Detect public IPv6 address
 		IP=$(ip -6 addr | sed -ne 's|^.* inet6 \([^/]*\)/.* scope global.*$|\1|p' | head -1)
 	fi
 	APPROVE_IP=${APPROVE_IP:-n}
-	if [[ $APPROVE_IP =~ n ]]; then
+	if test "$APPROVE_IP" = "n"; then
 		IP="$3"
 	fi
 	# If $IP is a private IP address, the server must be behind NAT
@@ -81,10 +82,10 @@
 	DNS="$7"
     DNS1=""
     DNS2=""
-    if [[ $DNS == "13" ]]; then
+	if test "$DNS" = "13"; then
 	    DNS1="$8"
         DNS2="$9"
-        if [[ $DNS2 == "" ]]; then
+		if test -z "$DNS2"; then
 	        break
 	    fi
     fi
@@ -92,12 +93,12 @@
 	echo ""
 	echo "Do you want to use compression? It is not recommended since the VORACLE attack makes use of it."
 	COMPRESSION_ENABLED="$10"
-	if [[ $COMPRESSION_ENABLED == "yes" ]]; then
+	if test "$COMPRESSION_ENABLED" = "yes"; then
 		echo "Choose which compression algorithm you want to use: (they are ordered by efficiency)"
 		echo "   1) LZ4-v2"
 		echo "   2) LZ4"
 		echo "   3) LZ0"
-		until [[ $COMPRESSION_CHOICE =~ ^[1-3]$ ]]; do
+		until test "$COMPRESSION_CHOICE" =~ "^[1-3]$"; do
 			COMPRESSION_CHOICE="$11"
 		done
 		case $COMPRESSION_CHOICE in
@@ -119,8 +120,8 @@
 	echo "See https://github.com/angristan/openvpn-install#security-and-encryption to learn more."
 	echo ""
 	CUSTOMIZE_ENC="$12"
-	if [[ $CUSTOMIZE_ENC == "no" ]]; then
-		# Use default, sane and fast parameters
+	# Use default, sane and fast parameters
+	if test "$COMPRESSION_ENABLED" = "no"; then		
 		CIPHER="AES-128-GCM"
 		CERT_TYPE="1" # ECDSA
 		CERT_CURVE="prime256v1"
@@ -281,9 +282,9 @@
 		esac
 		echo ""
 		# The "auth" options behaves differently with AEAD ciphers
-		if [[ $CIPHER =~ CBC$ ]]; then
+		if expr match "$CIPHER" '.*CBC$' > /dev/null; then
 			echo "The digest algorithm authenticates data channel packets and tls-auth packets from the control channel."
-		elif [[ $CIPHER =~ GCM$ ]]; then
+		elif expr match "$CIPHER" '.*GCM$' > /dev/null; then
 			echo "The digest algorithm authenticates tls-auth packets from the control channel."
 		fi
 		echo "Which digest algorithm do you want to use for HMAC?"
@@ -317,12 +318,12 @@
 	#Begin the instalation
 	# Get the "public" interface from the default route
 	NIC=$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)
-	if [[ -z $NIC ]] && [[ $IPV6_SUPPORT == 'yes' ]]; then
+	if test -z "$NIC" && "$IPV6_SUPPORT" = "yes"; then
 		NIC=$(ip -6 route show default | sed -ne 's/^default .* dev \([^ ]*\) .*$/\1/p')
 	fi
 
 	# $NIC can not be empty for script rm-openvpn-rules.sh
-	if [[ -z $NIC ]]; then
+	if test -z "$NIC"; then
 		echo
 		echo "Can not detect public interface."
 		echo "This needs for setup MASQUERADE."
@@ -337,7 +338,7 @@
 	fi
 
 	# Install the latest version of easy-rsa from source, if not already installed.
-	if [[ ! -d /etc/openvpn/easy-rsa/ ]]; then
+	if ! test -d "/etc/openvpn/easy-rsa/"; then
 		local version="3.1.2"
 		wget -O ~/easy-rsa.tgz https://github.com/OpenVPN/easy-rsa/releases/download/v${version}/EasyRSA-${version}.tgz
 		mkdir -p /etc/openvpn/easy-rsa
@@ -402,7 +403,7 @@
 		echo "$SERVER_NAME" >SERVER_NAME_GENERATED
 
 
-		if [[ $DH_TYPE == "2" ]]; then
+		if test "$DH_TYPE" = "2"; then
 			# ECDH keys are generated on-the-fly so we don't need to generate them beforehand
 			openssl dhparam -out dh.pem $DH_KEY_SIZE
 		fi
@@ -430,7 +431,7 @@
 	cp pki/ca.crt pki/private/ca.key "pki/issued/$SERVER_NAME.crt" "pki/private/$SERVER_NAME.key" /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn
 	cp "pki/issued/$SERVER_NAME.crt" "$RUTASERV/$SERVER_NAME.crt" 
 	cp "pki/private/$SERVER_NAME.key" "$RUTASERV/$SERVER_NAME.key"
-	if [[ $DH_TYPE == "2" ]]; then
+	if test "$DH_TYPE" = "2"; then
 		cp dh.pem /etc/openvpn
 	fi
 
@@ -439,9 +440,9 @@
 
 	# Generate server.conf
 	echo "port $PORT" >/etc/openvpn/$NAME.conf
-	if [[ $IPV6_SUPPORT == 'no' ]]; then
+	if test "$IPV6_SUPPORT" = "no"; then
 		echo "proto $PROTOCOL" >>/etc/openvpn/$NAME.conf
-	elif [[ $IPV6_SUPPORT == 'yes' ]]; then
+	elif test "$IPV6_SUPPORT" = "yes"; then
 		echo "proto ${PROTOCOL}6" >>/etc/openvpn/$NAME.conf
 	fi
 
@@ -468,14 +469,14 @@ ifconfig-pool-persist ipp.txt" >>/etc/openvpn/$NAME.conf
 		# Obtain the resolvers from resolv.conf and use them for OpenVPN
 		sed -ne 's/^nameserver[[:space:]]\+\([^[:space:]]\+\).*$/\1/p' $RESOLVCONF | while read -r line; do
 			# Copy, if it's a IPv4 |or| if IPv6 is enabled, IPv4/IPv6 does not matter
-			if [[ $line =~ ^[0-9.]*$ ]] || [[ $IPV6_SUPPORT == 'yes' ]]; then
+		if [[ $line =~ ^[0-9.]*$ ]] || test "$IPV6_SUPPORT" = "yes"; then
 				echo "push \"dhcp-option DNS $line\"" >>/etc/openvpn/$NAME.conf
 			fi
 		done
 		;;
 	2) # Self-hosted DNS resolver (Unbound)
 		echo 'push "dhcp-option DNS 10.8.0.1"' >>/etc/openvpn/$NAME.conf
-		if [[ $IPV6_SUPPORT == 'yes' ]]; then
+		if [test "$IPV6_SUPPORT" = "yes"; then
 			echo 'push "dhcp-option DNS fd42:42:42:42::1"' >>/etc/openvpn/$NAME.conf
 		fi
 		;;
@@ -521,7 +522,7 @@ ifconfig-pool-persist ipp.txt" >>/etc/openvpn/$NAME.conf
 		;;
 	13) # Custom DNS
 		echo "push \"dhcp-option DNS $DNS1\"" >>/etc/openvpn/$NAME.conf
-		if [[ $DNS2 != "" ]]; then
+		if test -n "$DNS2"; then
 			echo "push \"dhcp-option DNS $DNS2\"" >>/etc/openvpn/$NAME.conf
 		fi
 		;;
@@ -529,7 +530,7 @@ ifconfig-pool-persist ipp.txt" >>/etc/openvpn/$NAME.conf
 	echo 'push "redirect-gateway def1 bypass-dhcp"' >>/etc/openvpn/$NAME.conf
 
 	# IPv6 network settings if needed
-	if [[ $IPV6_SUPPORT == 'yes' ]]; then
+	if test "$IPV6_SUPPORT" = "yes"; then
 		echo 'server-ipv6 fd42:42:42:42::/112
 tun-ipv6
 push tun-ipv6
@@ -537,14 +538,14 @@ push "route-ipv6 2000::/3"
 push "redirect-gateway ipv6"' >>/etc/openvpn/$NAME.conf
 	fi
 
-	if [[ $COMPRESSION_ENABLED == "yes" ]]; then
+	if test "$COMPRESSION_ENABLED" = "yes"; then
 		echo "compress $COMPRESSION_ALG" >>/etc/openvpn/$NAME.conf
 	fi
 
-	if [[ $DH_TYPE == "1" ]]; then
+	if test "$DH_TYPE" = "1"; then
 		echo "dh none" >>/etc/openvpn/server.conf
 		echo "ecdh-curve $DH_CURVE" >>/etc/openvpn/$NAME.conf
-	elif [[ $DH_TYPE == "2" ]]; then
+	elif test "$DH_TYPE" = "2"; then
 		echo "dh dh.pem" >>/etc/openvpn/$NAME.conf
 	fi
 
@@ -581,7 +582,7 @@ cp "/etc/openvpn/$SERVER_NAME.conf" "$RUTASERV/$SERVER_NAME.conf"
 
 	# Enable routing
 	echo 'net.ipv4.ip_forward=1' >/etc/sysctl.d/99-openvpn.conf
-	if [[ $IPV6_SUPPORT == 'yes' ]]; then
+	if test "$IPV6_SUPPORT" = "yes"; then
 		echo 'net.ipv6.conf.all.forwarding=1' >>/etc/sysctl.d/99-openvpn.conf
 	fi
 	# Apply sysctl rules
@@ -590,14 +591,14 @@ cp "/etc/openvpn/$SERVER_NAME.conf" "$RUTASERV/$SERVER_NAME.conf"
 	# If SELinux is enabled and a custom port was selected, we need this
 	if hash sestatus 2>/dev/null; then
 		if sestatus | grep "Current mode" | grep -qs "enforcing"; then
-			if [[ $PORT != '1194' ]]; then
+			if test "$PORT" != '1194'; then
 				semanage port -a -t openvpn_port_t -p "$PROTOCOL" "$PORT"
 			fi
 		fi
 	fi
 
 	# Finally, restart and enable OpenVPN
-	if [[ $OS == 'arch' || $OS == 'fedora' || $OS == 'centos' || $OS == 'oracle' ]]; then
+	if test "$OS" = 'arch' || test "$OS" = 'fedora' || test "$OS" = 'centos' || test "$OS" = 'oracle'; then
 		# Don't modify package-provided service
 		cp /usr/lib/systemd/system/openvpn-server@.service /etc/systemd/system/openvpn-server@.service
 
@@ -609,7 +610,7 @@ cp "/etc/openvpn/$SERVER_NAME.conf" "$RUTASERV/$SERVER_NAME.conf"
 		systemctl daemon-reload
 		systemctl enable openvpn-server@$SERVER_NAME
 		systemctl restart openvpn-server@$SERVER_NAME
-	elif [[ $OS == "ubuntu" ]] && [[ $VERSION_ID == "16.04" ]]; then
+	elif test "$OS" = "ubuntu"  && test "$VERSION_ID" = "16.04"; then
 		# On Ubuntu 16.04, we use the package from the OpenVPN repo
 		# This package uses a sysvinit service
 		systemctl enable openvpn
@@ -628,7 +629,7 @@ cp "/etc/openvpn/$SERVER_NAME.conf" "$RUTASERV/$SERVER_NAME.conf"
 		systemctl restart openvpn@$SERVER_NAME
 	fi
 
-	if [[ $DNS == 2 ]]; then
+	if test "$DNS" = 2; then
 		installUnbound
 	fi
 
@@ -643,7 +644,7 @@ cp "/etc/openvpn/$SERVER_NAME.conf" "$RUTASERV/$SERVER_NAME.conf"
 	iptables -I FORWARD 1 -i tun0 -o $NIC -j ACCEPT
 	iptables -I INPUT 1 -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT" >/etc/iptables/add-openvpn-rules-$SERVER_NAME.sh
 
-	if [[ $IPV6_SUPPORT == 'yes' ]]; then
+	if test "$IPV6_SUPPORT" = "yes"; then
 		echo "ip6tables -t nat -I POSTROUTING 1 -s fd42:42:42:42::/112 -o $NIC -j MASQUERADE
 	ip6tables -I INPUT 1 -i tun0 -j ACCEPT
 	ip6tables -I FORWARD 1 -i $NIC -o tun0 -j ACCEPT
@@ -659,7 +660,7 @@ cp "/etc/openvpn/$SERVER_NAME.conf" "$RUTASERV/$SERVER_NAME.conf"
 	iptables -D FORWARD -i tun0 -o $NIC -j ACCEPT
 	iptables -D INPUT -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT" >/etc/iptables/rm-openvpn-rules-$SERVER_NAME.sh
 
-	if [[ $IPV6_SUPPORT == 'yes' ]]; then
+	if test "$IPV6_SUPPORT" = "yes"; then
 		echo "ip6tables -t nat -D POSTROUTING -s fd42:42:42:42::/112 -o $NIC -j MASQUERADE
 	ip6tables -D INPUT -i tun0 -j ACCEPT
 	ip6tables -D FORWARD -i $NIC -o tun0 -j ACCEPT
@@ -691,16 +692,16 @@ WantedBy=multi-user.target" >/etc/systemd/system/iptables-openvpn.service
 	systemctl start iptables-openvpn
 
 	# If the server is behind a NAT, use the correct IP address for the clients to connect to
-	if [[ $ENDPOINT != "" ]]; then
+	if test -n "$ENDPOINT"; then
 		IP=$ENDPOINT
 	fi
 
 	# client-template.txt is created so we have a template to add further users later
 	echo "client" >/etc/openvpn/client-template-$SERVER_NAME.txt
-	if [[ $PROTOCOL == 'udp' ]]; then
+	if test "$PROTOCOL" = "udp"; then
 		echo "proto udp" >>/etc/openvpn/client-template-$SERVER_NAME.txt
 		echo "explicit-exit-notify" >>/etc/openvpn/client-template-$SERVER_NAME.txt
-	elif [[ $PROTOCOL == 'tcp' ]]; then
+	elif test "$PROTOCOL" = "tcp"; then
 		echo "proto tcp-client" >>/etc/openvpn/client-template-$SERVER_NAME.txt
 	fi
 	echo "remote $IP $PORT
@@ -723,16 +724,19 @@ verb 3" >>/etc/openvpn/client-template-$SERVER_NAME.txt
 
 mkdir -p $RUTASERV/VPNs
 
-	if [[ $COMPRESSION_ENABLED == "yes" ]]; then
+chmod -R a+r "$RUTASERV"
+
+
+	if test "$COMPRESSION_ENABLED" = "yes"; then
 		echo "compress $COMPRESSION_ALG" >>/etc/openvpn/client-template-$SERVER_NAME.txt
 	fi
 	fi
 
-function installUnbound() {
+installUnbound() {
 	# If Unbound isn't installed, install it
-	if [[ ! -e /etc/unbound/unbound.conf ]]; then
+	if ! test -e "/etc/unbound/unbound.conf"; then
 
-		if [[ $OS =~ (debian|ubuntu) ]]; then
+		if test "$OS" =~ ^(debian|ubuntu)$; then
 			apt-get install -y unbound
 
 			# Configuration
@@ -743,7 +747,7 @@ hide-version: yes
 use-caps-for-id: yes
 prefetch: yes' >>/etc/unbound/unbound.conf
 
-		elif [[ $OS =~ (centos|amzn|oracle) ]]; then
+		elif test "$OS" = "centos" || test "$OS" = "amzn" || test "$OS" = "oracle"; then
 			yum install -y unbound
 
 			# Configuration
@@ -753,7 +757,7 @@ prefetch: yes' >>/etc/unbound/unbound.conf
 			sed -i 's|# hide-version: no|hide-version: yes|' /etc/unbound/unbound.conf
 			sed -i 's|use-caps-for-id: no|use-caps-for-id: yes|' /etc/unbound/unbound.conf
 
-		elif [[ $OS == "fedora" ]]; then
+		elif test "$OS" = "fedora"; then
 			dnf install -y unbound
 
 			# Configuration
@@ -763,7 +767,7 @@ prefetch: yes' >>/etc/unbound/unbound.conf
 			sed -i 's|# hide-version: no|hide-version: yes|' /etc/unbound/unbound.conf
 			sed -i 's|# use-caps-for-id: no|use-caps-for-id: yes|' /etc/unbound/unbound.conf
 
-		elif [[ $OS == "arch" ]]; then
+		elif test "$OS" = "arch"; then
 			pacman -Syu --noconfirm unbound
 
 			# Get root servers list
@@ -793,12 +797,12 @@ prefetch: yes' >>/etc/unbound/unbound.conf
 		fi
 
 		# IPv6 DNS for all OS
-		if [[ $IPV6_SUPPORT == 'y' ]]; then
+		if test "$IPV6_SUPPORT" = "yes"; then
 			echo 'interface: fd42:42:42:42::1
 access-control: fd42:42:42:42::/112 allow' >>/etc/unbound/unbound.conf
 		fi
 
-		if [[ ! $OS =~ (fedora|centos|amzn|oracle) ]]; then
+		if ! test "$OS" =~ ^(fedora|centos|amzn|oracle)$; then
 			# DNS Rebinding fix
 			echo "private-address: 10.0.0.0/8
 private-address: fd42:42:42:42::/112
@@ -830,7 +834,7 @@ private-address: fd00::/8
 private-address: fe80::/10
 private-address: 127.0.0.0/8
 private-address: ::ffff:0:0/96' >/etc/unbound/openvpn.conf
-		if [[ $IPV6_SUPPORT == 'yes' ]]; then
+		if test "$IPV6_SUPPORT" = "yes"; then
 			echo 'interface: fd42:42:42:42::1
 access-control: fd42:42:42:42::/112 allow' >>/etc/unbound/openvpn.conf
 		fi

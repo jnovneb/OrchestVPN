@@ -1,5 +1,7 @@
 class Server < ApplicationRecord
-    has_many :vpns
+    has_many :vpns, dependent: :destroy
+    has_many :clients, through: :vpns, dependent: :destroy
     validates :addr, format: { with: /\A\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\z/, message: "must be a valid IP address" }
     #validates :rangeIP, format: { with: /\A\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\z/, message: "must be a valid IP address" }
+
 end

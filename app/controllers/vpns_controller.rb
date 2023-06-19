@@ -101,9 +101,10 @@ class VpnsController < ApplicationController
 
   # DELETE /vpns/1 or /vpns/1.json
   def destroy
-
+    name = @vpn.name
+    servername = @vpn.server.name
     password = "javier y pepo"
-    ruta = Rails.root.join('vpn_files', @vpn.name).to_s
+    ruta = Rails.root.join('vpn_files', "#{servername}", "VPNs", "#{name}").to_s
     
     @vpns = Dir.glob(File.join(ruta, '*.ovpn')) # Obtener la lista de archivos .ovpn en el directorio
     
