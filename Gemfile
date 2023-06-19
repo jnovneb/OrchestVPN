@@ -31,6 +31,10 @@ gem 'tailwindcss-rails'
 # Authentication
 gem 'devise'
 
+#Storage
+gem 'activestorage'
+
+
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem 'jbuilder'
 

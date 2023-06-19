@@ -23,19 +23,27 @@ class HomeController < ApplicationController
     #Aquí llamarás a la página donde se muestre la monitorización
   end
 
+
   def connect
-    client_id = params[:client_id]
-      # Guarda el nombre de la VPN y luego la ruta del archivo de configuración
-      nombre = Client.find(client_id).name
-      ruta = Rails.root.join('vpn_files', "#{nombre}", "#{nombre}.ovpn").to_s
-      # Verifica si el archivo existe antes de enviarlo como descarga adjunta
-      if File.exist?(ruta)
-        # Envía el archivo como descarga adjunta
-        send_file(ruta, disposition: 'attachment', filename: "#{nombre}.ovpn")
-        flash[:notice] = "Archivo descargado exitosamente"
-      else
-        flash[:error] = "El archivo de configuración no existe"
-      end
-      redirect_to root_path
-  end 
+    client_id = params[:client_id].to_i
+    puts client_id
+    puts "Arriba id"
+    nombre = Client.find(client_id).name
+    client = Client.find_by(id: client_id)
+    vpn = client.vpn_id
+    vpn_name = Vpn.find(vpn).name
+    server = Vpn.find(vpn).server_id
+    server_name = Server.find(server).name
+    ruta = Rails.root.join('vpn_files', server_name, 'VPNs', vpn_name, "#{nombre}.ovpn").to_s
+  
+    if File.exist?(ruta)
+      send_data client.file.download, filename: "#{nombre}.ovpn", disposition: 'attachment'
+      flash[:notice] = "Archivo descargado exitosamente"
+    else
+      flash[:error] = "El archivo de configuración no existe"
+    end
+  end
+  
+  
+  
 end

@@ -24,7 +24,7 @@
             <td>User</td>
           <% end %>
           <td>
-            <%= button_to "Connect", connect_path(client_id: client.id), class: "btn" %>
+            <%= button_to "Connect", connect_path(client_id: client.id), class: "btn", data: { client_id: client.id, client_name: client.name } %>
           </td>
           <td><%= client[:options] %></td>
           <% if current_user.admin %>
@@ -43,7 +43,8 @@
             <td>User</td>
           <% end %>
           <td>
-            <%= button_to "Connect", connect_path(client_id: client.id), class: "btn" %>
+            <%= button_to "Connect", connect_path(client_id: client.id), class: "btn", data: { client_id: client.id, client_name: client.name } %>
+          </td>
           </td>
           <td><%= client[:options] %></td>
         </tr>
@@ -52,3 +53,45 @@
     </tbody>
   </table>
 </div>
+<script>
+document.querySelectorAll('.btn').forEach((button) => {
+  button.addEventListener('click', (event) => {
+    event.preventDefault();
+    const client_id = event.target.dataset.clientId;
+    const client_name = event.currentTarget.dataset.clientName;
+
+    // Realizar la solicitud AJAX
+    fetch('/home', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': '<%= form_authenticity_token %>'
+      },
+      body: JSON.stringify({ client_id: client_id })
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.blob();
+      } else {
+        throw new Error('Error en la solicitud AJAX');
+      }
+    })
+    .then(blob => {
+      // Crear un enlace temporal y descargar el archivo adjunto
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${client_name}.ovpn`;
+      a.click();
+
+      // Liberar el enlace temporal
+      URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  });
+});
+
+</script>
+
