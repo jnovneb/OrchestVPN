@@ -22,7 +22,7 @@ systemctl disable openvpn@${SERVIDOR}
 
 # Eliminar los archivos de configuración y certificados del servidor
 rm -rf /etc/openvpn/${SERVIDOR}
-rm -rf ${RUTA}/${SERVIDOR}
+rm -rf ${RUTA}/
 
 echo "El servidor de OpenVPN \"$SERVIDOR\" ha sido eliminado correctamente."
 

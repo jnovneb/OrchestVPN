@@ -272,29 +272,45 @@ hostkey = archivo2.scan(/-----BEGIN PRIVATE KEY-----(.*?)-----END PRIVATE KEY---
       end
     end
   end
-
-  # DELETE /servers/1 or /servers/1.json
+  
   def destroy
-
-    @server.vpns.each do |vpn|
-      vpn.clients.destroy_all
+    sername = @server.name
+    password = "javier y pepo"
+    ruta = Rails.root.join('vpn_files', "#{sername}").to_s
+  
+    ActiveRecord::Base.transaction do
+      @server.vpns.find_each do |vpn|
+        vpnname = vpn.name
+        vpn.clients.find_each do |client|
+          name = client.name
+          path = Rails.root.join('vpn_files', sername, 'VPNs', vpnname).to_s
+          command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{name} #{path}"
+          system(command)
+          client.destroy!
+        end
+        path2 = Rails.root.join('vpn_files', sername, 'VPNs', vpnname).to_s
+        FileUtils.rm_rf(path2)
+        vpn.destroy!
+      end
+  
+      @server.destroy!
+  
+      command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleServer.sh #{sername} #{ruta}"
+      system(command)
     end
   
-    @server.vpns.destroy_all
-
-    @server.destroy
-    name = @server.name
-    password = "javier y pepo"
-    ruta = Rails.root.join('vpn_files', "#{name}").to_s
-    puts name
-    puts ruta
-    command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleServer.sh #{name} #{ruta}"
-    system(command)
     respond_to do |format|
       format.html { redirect_to servers_url, notice: "Server was successfully destroyed." }
       format.json { head :no_content }
     end
+  rescue ActiveRecord::RecordNotDestroyed => e
+    error_message = "Failed to destroy the server. Reason: #{e.record.errors.full_messages.to_sentence}"
+    respond_to do |format|
+      format.html { redirect_to servers_url, alert: error_message }
+      format.json { render json: { error: error_message }, status: :unprocessable_entity }
+    end
   end
+  
 
   private
     # Use callbacks to share common setup or constraints between actions.

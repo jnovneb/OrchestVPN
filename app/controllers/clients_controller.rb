@@ -53,7 +53,6 @@ class ClientsController < ApplicationController
     command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/newClient.sh #{ruta} #{name} #{servername} #{contrasena} "
     system(command)
     rt2 = Rails.root.join('vpn_files', servername,'VPNs', vpnName, name+".ovpn")
-    puts "DESPUES DE RT2"
 
     respond_to do |format|
       if @client.save
@@ -61,7 +60,6 @@ class ClientsController < ApplicationController
         # Adjuntar archivo al modelo Client
         file = File.open(rt2)
         puts rt2
-        puts "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa"
         puts @client.file.name
         @client.file.attach(io: file, filename: "#{name}.ovpn")
         format.html { redirect_to client_url(@client), notice: "Client was successfully created." }
