@@ -59,6 +59,9 @@ gem 'select2-rails'
 
 gem 'turbolinks'
 
+# To talk to the OpenVPN management interface
+gem 'net-telnet'
+
 # Use Sass to process CSS
 # gem "sassc-rails"
 

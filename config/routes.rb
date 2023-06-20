@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'vpn_manager/status'
+  get 'vp_nmanager/status'
   resources :clients
   resources :servers
   devise_for :users
