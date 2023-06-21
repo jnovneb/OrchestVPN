@@ -1,4 +1,4 @@
 class Client < ApplicationRecord
-    belongs_to :vpn, dependent: :destroy
+    belongs_to :vpn
     has_one_attached :file
 end

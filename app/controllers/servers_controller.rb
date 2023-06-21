@@ -281,18 +281,19 @@ hostkey = archivo2.scan(/-----BEGIN PRIVATE KEY-----(.*?)-----END PRIVATE KEY---
     ActiveRecord::Base.transaction do
       @server.vpns.find_each do |vpn|
         vpnname = vpn.name
+        vpn_id = vpn.id
         vpn.clients.find_each do |client|
           name = client.name
           path = Rails.root.join('vpn_files', sername, 'VPNs', vpnname).to_s
           command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{name} #{path}"
           system(command)
-          client.destroy!
+          client.destroy
         end
         path2 = Rails.root.join('vpn_files', sername, 'VPNs', vpnname).to_s
         FileUtils.rm_rf(path2)
+        UsersVpn.where(vpn_id: vpn_id).destroy_all
         vpn.destroy!
       end
-  
       @server.destroy!
   
       command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleServer.sh #{sername} #{ruta}"
