@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  get 'vpn_manager/status'
-  get 'vp_nmanager/status'
   resources :clients
   resources :servers
   devise_for :users
@@ -22,9 +20,9 @@ Rails.application.routes.draw do
 
   post '/delusersvpn', to: 'users#delusersvpn', as: 'delusersvpn'
 
-  get '/users/options', to: 'users#options'
+  get '/users/options', to: 'users#options', as: 'options'
 
-
+  get 'vpn_manager/status', to: 'vpn_manager#status', as: 'status'
 
   resources :users do
     member do
