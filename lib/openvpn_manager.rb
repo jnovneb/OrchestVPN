@@ -10,22 +10,23 @@ class OpenvpnManager
     begin
       # Create a new Telnet object
       @client = Net::Telnet.new(@options)
-    rescue Net::Telnet::Error => e
-      # Handle specific Net::Telnet errors
-      puts "Net::Telnet error occurred: #{e.message}"
     rescue => e
-      # Handle other general exceptions
+      # Handle exceptions
       puts "An error occurred: #{e.message}"
     ensure
       # Make sure to close the Telnet connection
-      @client.close if @client&.connected?
+      # @client.close if @client&.connected?
     end
   end
 
   def send_command(command)
-    @client.puts(command)
-    response = @client.waitfor('String' => /END/)
-    response.split("\n")[1..-2].map(&:strip)
+    if @client
+      @client.puts(command)
+      response = @client.waitfor('String' => /END/)
+      response.split("\n")[1..-2].map(&:strip)
+    else
+      response = ['Error gathering data from OpenVPN management interface']
+    end
   end
 
   def status
