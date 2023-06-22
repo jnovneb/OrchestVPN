@@ -1,6 +1,7 @@
 	#!/bin/bash
 	
 	RUTA="$1"
+	COSA="$10"
 
 	echo "Enter a name"
 	NAME="$2"
@@ -9,8 +10,26 @@
 
 	mkdir -p "$RUTASERV"
 
-
-
+	echo "Ruta: $1"
+	echo "Name: $2"
+	echo "IP: $3"
+	echo "IPV6 supp: $4"
+	echo "PORT: $5"
+	echo "PROTOCOL: $6"
+	echo "DNS: $7"
+	echo "DNS1: $8"
+	echo "DNS2: $9"
+	echo "COMPRESSION ENABLED: '$10'"
+	echo "COMPRESSION_CHOICE: $11"
+	echo "CUSTOMIZE_ENC: $12"
+	echo "$13"
+	echo "$14"
+	echo "$15"
+	echo "$16"
+	echo "$17"
+	echo "$18"
+	echo "$19"
+	echo "$20"
 
 	# Detect public IPv4 address and pre-fill for the user
 	IP=$(ip -4 addr | sed -ne 's|^.* inet \([^/]*\)/.* scope global.*$|\1|p' | head -1)
@@ -92,14 +111,16 @@
 
 	echo ""
 	echo "Do you want to use compression? It is not recommended since the VORACLE attack makes use of it."
-	COMPRESSION_ENABLED="$10"
+	echo "Compression choose"
+	COMPRESSION_ENABLED="${10}"
+	echo "$COMPRESSION_ENABLED"
 	if test "$COMPRESSION_ENABLED" = "yes"; then
 		echo "Choose which compression algorithm you want to use: (they are ordered by efficiency)"
 		echo "   1) LZ4-v2"
 		echo "   2) LZ4"
 		echo "   3) LZ0"
 		until test "$COMPRESSION_CHOICE" =~ "^[1-3]$"; do
-			COMPRESSION_CHOICE="$11"
+			COMPRESSION_CHOICE="${11}"
 		done
 		case $COMPRESSION_CHOICE in
 		1)
@@ -119,9 +140,9 @@
 	echo "Note that whatever you choose, all the choices presented in the script are safe. (Unlike OpenVPN's defaults)"
 	echo "See https://github.com/angristan/openvpn-install#security-and-encryption to learn more."
 	echo ""
-	CUSTOMIZE_ENC="$12"
+	CUSTOMIZE_ENC="${12}"
 	# Use default, sane and fast parameters
-	if test "$COMPRESSION_ENABLED" = "no"; then		
+	if test "$CUSTOMIZE_ENC" = "no"; then		
 		CIPHER="AES-128-GCM"
 		CERT_TYPE="1" # ECDSA
 		CERT_CURVE="prime256v1"
@@ -139,7 +160,7 @@
 		echo "   4) AES-128-CBC"
 		echo "   5) AES-192-CBC"
 		echo "   6) AES-256-CBC"
-		CIPHER_CHOICE="$13"
+		CIPHER_CHOICE="${13}"
 		case $CIPHER_CHOICE in
 		1)
 			CIPHER="AES-128-GCM"
@@ -164,7 +185,7 @@
 		echo "Choose what kind of certificate you want to use:"
 		echo "   1) ECDSA (recommended)"
 		echo "   2) RSA"
-		CERT_TYPE="$14"
+		CERT_TYPE="${14}"
 		case $CERT_TYPE in
 		1)
 			echo ""
@@ -172,7 +193,7 @@
 			echo "   1) prime256v1 (recommended)"
 			echo "   2) secp384r1"
 			echo "   3) secp521r1"
-			CERT_CURVE_CHOICE="$15"
+			CERT_CURVE_CHOICE="${15}"
 			case $CERT_CURVE_CHOICE in
 			1)
 				CERT_CURVE="prime256v1"
@@ -191,7 +212,7 @@
 			echo "   1) 2048 bits (recommended)"
 			echo "   2) 3072 bits"
 			echo "   3) 4096 bits"
-			RSA_KEY_SIZE_CHOICE="$16"
+			RSA_KEY_SIZE_CHOICE="${16}"
 			case $RSA_KEY_SIZE_CHOICE in
 			1)
 				RSA_KEY_SIZE="2048"
@@ -211,7 +232,7 @@
 		1)
 			echo "   1) ECDHE-ECDSA-AES-128-GCM-SHA256 (recommended)"
 			echo "   2) ECDHE-ECDSA-AES-256-GCM-SHA384"
-			CC_CIPHER_CHOICE="$17"
+			CC_CIPHER_CHOICE="${17}"
 			case $CC_CIPHER_CHOICE in
 			1)
 				CC_CIPHER="TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256"
@@ -224,7 +245,7 @@
 		2)
 			echo "   1) ECDHE-RSA-AES-128-GCM-SHA256 (recommended)"
 			echo "   2) ECDHE-RSA-AES-256-GCM-SHA384"
-			CC_CIPHER_CHOICE="$17"
+			CC_CIPHER_CHOICE="${17}"
 			case $CC_CIPHER_CHOICE in
 			1)
 				CC_CIPHER="TLS-ECDHE-RSA-WITH-AES-128-GCM-SHA256"
@@ -239,7 +260,7 @@
 		echo "Choose what kind of Diffie-Hellman key you want to use:"
 		echo "   1) ECDH (recommended)"
 		echo "   2) DH"
-		DH_TYPE="$18"
+		DH_TYPE="${18}"
 		case $DH_TYPE in
 		1)
 			echo ""
@@ -247,7 +268,7 @@
 			echo "   1) prime256v1 (recommended)"
 			echo "   2) secp384r1"
 			echo "   3) secp521r1"
-			DH_CURVE_CHOICE="$19"
+			DH_CURVE_CHOICE="${19}"
 			case $DH_CURVE_CHOICE in
 			1)
 				DH_CURVE="prime256v1"
@@ -266,7 +287,7 @@
 			echo "   1) 2048 bits (recommended)"
 			echo "   2) 3072 bits"
 			echo "   3) 4096 bits"
-			DH_KEY_SIZE_CHOICE="$20"
+			DH_KEY_SIZE_CHOICE="${20}"
 			case $DH_KEY_SIZE_CHOICE in
 			1)
 				DH_KEY_SIZE="2048"
@@ -291,7 +312,7 @@
 		echo "   1) SHA-256 (recommended)"
 		echo "   2) SHA-384"
 		echo "   3) SHA-512"
-		HMAC_ALG_CHOICE="$21"
+		HMAC_ALG_CHOICE="${21}"
 		case $HMAC_ALG_CHOICE in
 		1)
 			HMAC_ALG="SHA256"
@@ -308,7 +329,7 @@
 		echo "tls-auth authenticates the packets, while tls-crypt authenticate and encrypt them."
 		echo "   1) tls-crypt (recommended)"
 		echo "   2) tls-auth"
-		TLS_SIG="$22"
+		TLS_SIG="${22}"
 	fi
 	echo ""
 	echo "Okay, that was all I needed. We are ready to setup your OpenVPN server now."
@@ -455,6 +476,7 @@ keepalive 10 120
 topology subnet
 server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt" >>/etc/openvpn/$NAME.conf
+dh dh.pem
 
 	# DNS resolvers
 	case $DNS in

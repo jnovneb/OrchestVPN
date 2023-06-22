@@ -23,7 +23,7 @@ class ServersController < ApplicationController
   def create
     name = params[:server][:name]
     address = params[:server][:addr]
-    accept_IPV6 = params[:server][:IPV6]
+    accept_IPV6 = params[:server][:IPv6]
     port = params[:server][:port]
     protocol = params[:server][:protocol]
     dns = params[:server][:dns]
@@ -42,6 +42,33 @@ class ServersController < ApplicationController
     control_cipherDH2 = params[:server][:control_cipherDH2]
     digest_algorithm = params[:server][:digest_algorithm]
     tls_sig = params[:server][:tls_sig]
+
+    if primarydns.nil?
+      primarydns = "nil"
+    end
+
+    if secondarydns.nil?
+      secondarydns = "nil"
+    end
+    if encrypt_cert.nil?
+      encrypt_cert = "nil"
+    end
+    puts dns
+    puts primarydns
+    puts secondarydns
+    puts compressbtn
+    puts compression
+    puts encryptbtn
+    puts encrypt
+    puts encrypt_cert
+    puts compress_encrypt
+    puts key_size_encrypt
+    puts control_cipher
+    puts diffie_hellman
+    puts control_cipherDH
+    puts control_cipherDH2
+    puts digest_algorithm
+    puts tls_sig
 
     dnstext = "DNS option selected: "
 
@@ -228,13 +255,32 @@ password = "javier y pepo"
 ruta = Rails.root.join('vpn_files').to_s
 
 
+puts ruta
+puts name
+puts address
+puts accept_IPV6
+puts port
+puts protocol
+puts dns
+puts primarydns
+puts secondarydns
+puts compressbtn
+puts compression
+puts encryptbtn
+puts encrypt
+puts encrypt_cert
+puts compress_encrypt
+puts key_size_encrypt
+puts control_cipher
+puts diffie_hellman
+puts control_cipherDH
+puts control_cipherDH2
+puts digest_algorithm
+puts tls_sig
 # Llamar al script de Bash con los argumentos recopilados
-command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/serverInstalation.sh #{ruta} #{name} #{address} #{accept_IPV6} #{port} #{protocol} #{dns} #{primarydns} #{secondarydns}
-#{compressbtn} #{compression} #{encryptbtn} #{encrypt} #{encrypt_cert} #{compress_encrypt} #{key_size_encrypt} #{control_cipher} #{diffie_hellman} #{control_cipherDH}
-#{control_cipherDH2} #{digest_algorithm} #{tls_sig}"
+command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/serverInstalation.sh #{ruta} #{name} #{address} #{accept_IPV6} #{port} #{protocol} #{dns} #{primarydns} #{secondarydns} #{compressbtn} #{compression} #{encryptbtn} #{encrypt} #{encrypt_cert} #{compress_encrypt} #{key_size_encrypt} #{control_cipher} #{diffie_hellman} #{control_cipherDH} #{control_cipherDH2} #{digest_algorithm} #{tls_sig}"
 
 system(command)
-#MODIFICALOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 crt = Rails.root.join('vpn_files', "#{name}", "#{name}.crt").to_s
 key = Rails.root.join('vpn_files', "#{name}", "#{name}.key").to_s
 
