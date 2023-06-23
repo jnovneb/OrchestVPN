@@ -88,11 +88,10 @@ class OpenvpnManager
 
   # Send signal s to daemon, where s can be SIGHUP, SIGTERM, SIGUSR1, SIGUSR2
   def signal(s)
-    if %w(SIGHUP SIGTERM SIGUSR1 SIGUSR2).include? s
-      send_command "signal #{s}"
-    else
-      raise ArgumentError "Unsupported signal '#{s}' (Supported signals: SIGHUP, SIGTERM, SIGUSR1, SIGUSR2)"
+    unless %w[SIGHUP SIGTERM SIGUSR1 SIGUSR2].include? s
+      raise ArgumentError "Unsupported signal '#{s}' (Only SIGHUP, SIGTERM, SIGUSR1, SIGUSR2)"
     end
+    send_command "signal #{s}"
   end
 
   # Set log verbosity level to n, or show if n is absent
@@ -125,7 +124,7 @@ class OpenvpnManager
   private
 
   def send_command(command)
-    unless @client.nil?
+    return if @client.nil?
       c = @client.cmd('String' => command, 'Match' => /(SUCCESS:.*\n|ERROR:.*\n|END.*\n)/)
       if c =~ /\AERROR\: (.+)\n\Z/
         raise Regexp.last_match 1
@@ -134,7 +133,6 @@ class OpenvpnManager
       else
         c
       end
-    end
+    
   end
-
 end

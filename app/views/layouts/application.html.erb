@@ -17,6 +17,7 @@
   </head>
 
   <body>
+
   <div class="navbar bg-base-100">
     <div class="navbar-start">
       <div class="dropdown">
@@ -83,10 +84,11 @@
   </div>
   <hr class="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">
 
+  <div class="px-4">
+    <p class="notice"><%= notice %></p>
+    <p class="alert"><%= alert %></p>
+    <%= yield %>
+  </div>
 
-
-<div class="px-4">
-  <%= yield %>
-</div>
   </body>
 </html>
