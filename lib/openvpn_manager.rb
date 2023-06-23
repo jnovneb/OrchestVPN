@@ -1,7 +1,7 @@
 require 'net/telnet'
 
 # Class to talk to the OpenVPN management interface.
-# This class is a wrapper around the Net::Telnet class.
+# This class is kind of a wrapper around the Net::Telnet class.
 # Inspired by https://github.com/dguerri/openvpn_management
 class OpenvpnManager
   # @param [Hash] options
@@ -91,6 +91,7 @@ class OpenvpnManager
     unless %w[SIGHUP SIGTERM SIGUSR1 SIGUSR2].include? s
       raise ArgumentError "Unsupported signal '#{s}' (Only SIGHUP, SIGTERM, SIGUSR1, SIGUSR2)"
     end
+
     send_command "signal #{s}"
   end
 
@@ -123,16 +124,17 @@ class OpenvpnManager
 
   private
 
+  # Send a command to the OpenVPN management interface
   def send_command(command)
     return if @client.nil?
-      c = @client.cmd('String' => command, 'Match' => /(SUCCESS:.*\n|ERROR:.*\n|END.*\n)/)
-      if c =~ /\AERROR\: (.+)\n\Z/
-        raise Regexp.last_match 1
-      elsif c =~ /\ASUCCESS\: (.+)\n\Z/
-        Regexp.last_match 1
-      else
-        c
-      end
-    
+
+    c = @client.cmd('String' => command, 'Match' => /(SUCCESS:.*\n|ERROR:.*\n|END.*\n)/)
+    if c =~ /\AERROR\: (.+)\n\Z/
+      raise Regexp.last_match 1
+    elsif c =~ /\ASUCCESS\: (.+)\n\Z/
+      Regexp.last_match 1
+    else
+      c
+    end
   end
 end

@@ -31,7 +31,7 @@
           <% if current_user.admin %>
             <li><%= link_to "Servers", servers_path %></li>
           <% end%>
-          <% if current_user.admin || current_user.users_vpns.exists?(admin_vpn: true)%>
+          <% if current_user.admin || current_user.users_vpns.exists?(admin_vpn: true) %>
             <li><%= link_to "Users", users_path %></li>
           <% end %>
           <li><%= link_to "Contact", contact_path %></li>
@@ -54,29 +54,27 @@
     </div>
     <div class="navbar-center hidden lg:flex">
       <ul class="menu menu-horizontal px-20">
-        <%if user_signed_in? %>
+        <% if user_signed_in? %>
           <li><%= link_to "Home", home_path %></li>
           <li><%= link_to "VPN", vpns_path %></li>
           <% if current_user.admin %>
             <li><%= link_to "Servers", servers_path %></li>
           <% end%>
           <% if current_user.admin || current_user.users_vpns.exists?(admin_vpn: true)%>
-          <li><%= link_to "Users", users_path %></li>
-        <% end %>
+            <li><%= link_to "Users", users_path %></li>
+          <% end %>
           <li><%= link_to "Contact", contact_path%></li>
-          </li>
-
-        <%else %>
+        <% else %>
           <li><a>Home</a></li>
           <li><a>VPN</a></li>
           <li><a>Contact</a></li>
-        <%end %>
+        <% end %>
       </ul>
     </div>
     <div class="navbar-end">
       <% if user_signed_in? %>
-        <%= button_to "Sign out ", destroy_user_session_path, method: :delete, class:"btn" %>
-        <%= link_to "Edit Profile ", edit_user_registration_path, class:"px-8" %>
+        <%= button_to "Sign out ", destroy_user_session_path, method: :delete, class: "btn" %>
+        <%= link_to "Edit Profile ", edit_user_registration_path, class: "px-8" %>
       <% else %>
         <%= button_to "Sign in" , new_user_session_path, class: "btn"%>
       <% end %>

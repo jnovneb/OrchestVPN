@@ -63,6 +63,9 @@ gem 'turbolinks'
 # To talk to the OpenVPN management interface
 gem 'net-telnet'
 
+# Interface with the RRD files
+gem 'rrd-ffi'
+
 # Use Sass to process CSS
 # gem "sassc-rails"
 
