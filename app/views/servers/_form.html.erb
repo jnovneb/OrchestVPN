@@ -1,3 +1,4 @@
+</br>
 <%= form_with(model: server, class: "contents") do |form| %>
   <% if server.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
@@ -11,208 +12,34 @@
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :name, "Name"%>
-    <%= form.text_field :name, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :addr, "Introduce the public IP" %>
-    <%= form.text_field :addr, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :IPv6, "Do you want to use IPv6?"%>
-    <br></br>
-    <%= form.radio_button :IPv6, "yes"%>
-    <%= form.label :IPv6_true, "Yes" %>
-
-    <%= form.radio_button :IPv6, "no"%>
-    <%= form.label :IPv6_false, "No" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :port, "Introduce the port"%>
-    <%= form.text_field :port, value: "1194", class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: "port" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :protocol, "Select a protocol" %>
-    <%= form.select :protocol, [['UDP(recommended)', 'udp'], ['TCP', 'tcp']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: "protocol" %>
-  </div>
-
-  <div class="my-5">
-  <%= form.label :dns_label, "DNS" %>
-  <%= form.select :dns, [['Current system resolvers', '1'], ['Self-hosted DNS(unbound)', '2'], ['Cloudflare', '3'], ['Quad9','4'], ['Quad9 uncensored','5'], ['FDN(France)','6'], ['DNS.WATCH(Germany)','7'], ['OpenDNS','8'], ['Google','9'], ['Yandex Basic(Russia)','10'], ['AdGuard DNS','11'], ['NextDNS','12'], ['Write your custom DNS', '13']], { selected: '1' }, { class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: 'opciones_select' } %>
-
-  <div id="otra_opcion_input" style="display: none;">
-    <%= form.label :dns, "Primary DNS" %>
-    <%= text_field_tag 'otra_opcion', '', class: 'block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full', id: "primaryDNS" %>
-
-    <%= form.label :dns, "Secondary DNS" %>
-    <%= text_field_tag 'otra_opcion', '', class: 'block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full', id: "secondaryDNS" %>
-  </div>
-</div>
-
-<script>
-  $(document).ready(function() {
-    $('#opciones_select').change(function() {
-      if ($(this).val() === '13') {
-        $('#otra_opcion_input').show();
-      } else {
-        $('#otra_opcion_input').hide();
-      }
-    });
-  });
-</script>
-
-<div class="my-5">
-<%= form.label :IPv6, "Do you want to use compression? (Not recommended)" %>
-<br></br>
-<%= form.radio_button :compression, "yes", id: "compression-btn", class:"compress-btn"%>
-<%= form.label :compression_true, "Yes" %>
-
-<%= form.radio_button :compression, "no", id: "compression-btn", class:"compress-btn-no" %>
-<%= form.label :compression_false, "No" %>
-</div>
-
-<div class="my-5" id="compression-select" style="display: none;">
-  <%= form.label :compression, "Compression Options" %>
-  <%= form.select :compression_options, [[' lz4-v2', '1'], ['lz4', '2'], ['lzo', '3']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: "compressOpt"%>
-</div>
-
-<script>
-  $(document).ready(function() {
-    $('.compress-btn').click(function() {
-      $('#compression-select').show();
-    });
-    $('.compress-btn-no').click(function() {
-      $('#compression-select').hide();
-    }); 
-  });
-</script>
-
-<div class="my-5">
-<%= form.label :encryption_lab, "Do you want to customize encryption settings ?" %>
-<br></br>
-<%= form.radio_button :encryption, "yes", id: "encryption-btn", class: "encryption-btn" %>
-<%= form.label :encryption_true, "Yes" %>
-
-<%= form.radio_button :encryption, "no",  id: "encryption-btn", class: "encryption-btn-no" %>
-<%= form.label :encryption_false, "No" %>
-</div>
-
-<div class="my-5" id="encryption-select" style="display: none;">
-  <%= form.label :encryption_lab, "Encryption Options\n" %>
-  <br></br>
-  <%= form.label :encryption_lab, "Choose which cipher do you want to use" %>
-  <%= form.select :encryption_options, [['AES-128-GCM(recommended)', '1'], ['AES-192-GCM', '2'], ['AES-256-GCM', '3'], ['AES-128-CBC', '4'], ['AES-192-CBC', '5'], ['AES-256-CBC', '6']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  <%= form.label :encryption_lab, "Choose what kind of certificate you want to use."%>
-  <%= form.select :encryption_cert, [['ECDSA(recommended)', '1'], ['RSA', '2']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: "certificate-select" %>
-  <div id="certificate2-select" style="display: none;">
-    <%= form.label :encryption_lab, "Choose which curve want to use for the certificate's key"%>
-    <%= form.select :compression_options_enc, [[' prime256v1', '1'], ['secp384r1', '2'], ['secp521r1', '3']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-  <div id="certificate3-select" style="display: none;">
-    <%= form.label :encryption_lab, "Choose which size you want to use for the certificateś RSA key:"%>
-    <%= form.select :compression_options_key, [[' 2048 bits(recommended)', '1'], ['3072', '2'], ['4096', '3']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-</div>
-
-
-<script>
-  $(document).ready(function() {
-    $('.encryption-btn').click(function() {
-      $('#encryption-select').show();
-      if ($('#certificate-select').val() === '1') {
-        $('#certificate2-select').show();
-        $('#certificate3-select').hide();
-      } else {
-        $('#certificate2-select').hide();
-      }
-      if ($('#certificate-select').val() === '2') {
-        $('#certificate3-select').show();
-      } else {
-        $('#certificate3-select').hide();
-      }
-    });
-
-    $('.encryption-btn-no').click(function() {
-      $('#encryption-select').hide();
-    });
-
-    $('#certificate-select').change(function() {
-      if ($(this).val() === '1') {
-        $('#certificate2-select').show();
-        $('#cipher_choice').show();
-      } else {
-        $('#certificate2-select').hide();
-        $('#cipher_choice').hide();
-      }
-      if ($(this).val() === '2') {
-        $('#certificate3-select').show();
-        $('#cipher_choice2').show();
-
-      } else {
-        $('#certificate3-select').hide();
-        $('#cipher_choice2').hide();
-      }
-    });
-  });
-</script>
-
-<div class="my-5">
-  <%= form.label :control_cipher, "Choose which cipher you want to use for the control channel" %>
-  <div id="cipher_choice">
-    <%= form.select :control_cipher, [['ECDHE-ECDSA-AES-128-GCM-SHA256(recommended)', '1'], ['ECDHE-ECDSA-AES-256-GCM-SHA384', '2']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: "cipher_choice" %>
+  <div class="flex flex-wrap -mx-3 mb-6">
+    <div class="w-full  px-3 mb-6 md:mb-0">
+      <%= form.label :name, class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 parse" do %>
+        Name
+      <% end %>
+      <%= form.text_field :name, name: "server[name]", id: "vpn_name", class: "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" %>
     </div>
-  <div id="cipher_choice2"  style="display: none;">
-    <%= form.select :control_cipher, [['ECDHE-RSA-AES-128-GCM-SHA256(recommended)', '1'], ['ECDHE-RSA-AES-256-GCM-SHA384', '2']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: "cipher-choice2" %>
   </div>
-</div>
 
-
-<div class="my-5">
-  <%= form.label :diffie_hellman, "Choose Diffie-Hellman key you want to use" %>
-  <%= form.select :diffie_hellman, [['ECDH(recommended)', '1'], ['DH', '2']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: "df_select" %>
-  <div id="diffie_hellman" >
-    <%= form.label :control_cipher, "Choose the curve type" %>
-    <%= form.select :control_cipherDH, [['prime256v1(recommended)', '1'], ['secp384r1', '2'], ['secp521r1', '3']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: "cipher-choice" %>
+  <div class="flex flex-wrap -mx-3 mb-6"> 
+    <div class="w-full px-3 mb-6 md:mb-0">
+        <label for="server_CACRT" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 parse">
+          CA certificate
+        </label>
+      <%= form.text_area :description, name: "server[CAcert]",id: "server_CACRT", rows: 4, class: "block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", placeholder: "Add the CA certificate" %>
+    </div>
   </div>
-  <div id="diffie_hellman2" style="display: none;">
-    <%= form.label :control_cipher, "Choose the size of the Diffie-Hellman key" %>
-    <%= form.select :control_cipherDH2, [['2048 bits(recommended)', '1'], ['3072', '2'],['4096','3']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", id: "cipher-choice2" %>
+
+  <div class="flex flex-wrap -mx-3 mb-6"> 
+    <div class="w-full px-3 mb-6 md:mb-0">
+        <label for="server_CAkey" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 parse">
+          CA certificate
+        </label>
+      <%= form.text_area :description, name: "server[CAkey]",id: "server_CAkey", rows: 4, class: "block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", placeholder: "Add the CA key" %>
+    </div>
   </div>
-</div>
 
-<script>
-  $(document).ready(function() {
-    $('#df_select').change(function() {
-      var selectedOption = $(this).val();
-      
-      if (selectedOption === 'ECDH') {
-        $('#diffie_hellman').show();
-        $('#diffie_hellman2').hide();
-      } else if (selectedOption === 'DH') {
-        $('#diffie_hellman').hide();
-        $('#diffie_hellman2').show();
-      } else {
-        $('#diffie_hellman').hide();
-        $('#diffie_hellman2').hide();
-      }
-    });
-  });
-</script>
 
-<div class="my-5">
-    <%= form.label :digest_algorithm, "Select a digest algorithm for HMAC" %>
-    <%= form.select :digest_algorithm, [['SHA-256(recommended)', '1'], ['SHA-384', '2'], ['SHA512','3']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-</div>
-
-<div class="my-5">
-    <%= form.label :tls_sig, "Additional security" %>
-    <%= form.select :tls_sig, [['tls-crypt(recommended)', '1'], ['tls-auth', '2']], {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-</div>
 
 <div class="inline">
     <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>

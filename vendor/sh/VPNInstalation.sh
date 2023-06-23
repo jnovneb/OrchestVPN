@@ -744,7 +744,7 @@ ignore-unknown-option block-outside-dns
 setenv opt block-outside-dns # Prevent Windows 10 DNS leak
 verb 3" >>/etc/openvpn/client-template-$SERVER_NAME.txt
 
-mkdir -p $RUTASERV/VPNs
+mkdir -p $RUTASERV/Clients
 
 chmod -R a+r "$RUTASERV"
 

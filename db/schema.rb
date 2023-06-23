@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_21_161031) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_23_181826) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
-    t.bigint "record_id", null: false
-    t.bigint "blob_id", null: false
+    t.integer "record_id", null: false
+    t.integer "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
@@ -34,7 +34,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_21_161031) do
   end
 
   create_table "active_storage_variant_records", force: :cascade do |t|
-    t.bigint "blob_id", null: false
+    t.integer "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
@@ -55,13 +55,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_21_161031) do
 
   create_table "servers", force: :cascade do |t|
     t.string "name"
-    t.string "addr"
-    t.string "credentials"
-    t.string "hostkey"
-    t.string "CA"
+    t.string "CAcert"
+    t.string "CAkey"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "options"
   end
 
   create_table "users", force: :cascade do |t|
@@ -100,11 +97,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_21_161031) do
     t.string "description"
     t.string "protocol"
     t.integer "port"
-    t.string "encryption"
     t.string "options"
     t.string "certificate"
     t.string "version"
-    t.string "clientoptions"
     t.string "VPNAdminList"
     t.string "users"
     t.string "vpn_admin_list"

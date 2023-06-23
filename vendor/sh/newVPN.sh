@@ -21,7 +21,7 @@ SERVER="$5"
 ANCHO_DE_BANDA="$6"
 
 # Crear la carpeta del cliente con los permisos adecuados
-clientDirec="$RUTA/$CLIENT"
+clientDirec="$RUTA/$NAME"
 mkdir -p "$clientDirec"
 chmod 755 "$clientDirec"
 chown "$SUDO_USER:$SUDO_USER" "$clientDirec"
