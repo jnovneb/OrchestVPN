@@ -34,7 +34,7 @@ class HomeController < ApplicationController
     vpn_name = Vpn.find(vpn).name
     server = Vpn.find(vpn).server_id
     server_name = Server.find(server).name
-    ruta = Rails.root.join('vpn_files', server_name, 'VPNs', vpn_name, "#{nombre}.ovpn").to_s
+    ruta = Rails.root.join('vpn_files', server_name, vpn_name, 'Clients',"#{nombre}.ovpn").to_s
   
     if File.exist?(ruta)
       send_data client.file.download, filename: "#{nombre}.ovpn", disposition: 'attachment'

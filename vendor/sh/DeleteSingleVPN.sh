@@ -14,6 +14,7 @@ fi
 
 # Obtener el nombre del servidor
 SERVIDOR="$1"
+RUTA="$2"
 
 # Detener y deshabilitar el servicio OpenVPN del servidor
 systemctl stop openvpn@${SERVIDOR}
@@ -21,6 +22,7 @@ systemctl disable openvpn@${SERVIDOR}
 
 # Eliminar los archivos de configuración y certificados del servidor
 rm -rf /etc/openvpn/${SERVIDOR}
+rm -rf ${RUTA}/
 
 echo "El servidor de OpenVPN \"$SERVIDOR\" ha sido eliminado correctamente."
 

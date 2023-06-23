@@ -1,35 +1,30 @@
-	#!/bin/bash
-	
-	RUTA="$1"
-	COSA="$10"
+#!/bin/bash
 
-	echo "Enter a name"
-	NAME="$2"
-	
-	RUTASERV="$RUTA/$NAME"
+RUTA="$1"
+SERV="${23}"
 
-	mkdir -p "$RUTASERV"
+echo "Enter a name"
+NAME="$2"
+CIDR="${24}"
 
-	echo "Ruta: $1"
-	echo "Name: $2"
-	echo "IP: $3"
-	echo "IPV6 supp: $4"
-	echo "PORT: $5"
-	echo "PROTOCOL: $6"
-	echo "DNS: $7"
-	echo "DNS1: $8"
-	echo "DNS2: $9"
-	echo "COMPRESSION ENABLED: '$10'"
-	echo "COMPRESSION_CHOICE: $11"
-	echo "CUSTOMIZE_ENC: $12"
-	echo "$13"
-	echo "$14"
-	echo "$15"
-	echo "$16"
-	echo "$17"
-	echo "$18"
-	echo "$19"
-	echo "$20"
+RUTASERV="$RUTA/$SERV"
+RUTADIREC="$RUTASERV/$NAME"
+
+# Does the directory exist
+	if [ ! -d "$RUTASERV" ]; then
+  		mkdir -p "$RUTASERV"
+  		echo "Folder created: $RUTASERV"
+	fi
+
+	if [ ! -d "$RUTADIRED" ]; then
+  		mkdir -p "$RUTADIREC"
+  		echo "Folder created: $RUTADIREC"
+	fi
+
+	# All users can read
+	chmod a+r "$RUTASERV"
+	chmod a+r "$RUTADIREC"
+
 
 	# Detect public IPv4 address and pre-fill for the user
 	IP=$(ip -4 addr | sed -ne 's|^.* inet \([^/]*\)/.* scope global.*$|\1|p' | head -1)
@@ -446,12 +441,15 @@
 	#Creating the folder of the server
 	mkdir /etc/openvpn/$NAME
 	
+	PORT_VALUE="${PORT//[!0-9]/}"
+	NUM_TO_ADD=7500
+	MANAGEMNET_PORT=$((PORT_VALUE + NUM_TO_ADD))
 
 
 	# Move all the generated files
 	cp pki/ca.crt pki/private/ca.key "pki/issued/$SERVER_NAME.crt" "pki/private/$SERVER_NAME.key" /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn
-	cp "pki/issued/$SERVER_NAME.crt" "$RUTASERV/$SERVER_NAME.crt" 
-	cp "pki/private/$SERVER_NAME.key" "$RUTASERV/$SERVER_NAME.key"
+	cp "pki/issued/$SERVER_NAME.crt" "$RUTADIREC/$SERVER_NAME.crt" 
+	cp "pki/private/$SERVER_NAME.key" "$RUTADIREC/$SERVER_NAME.key"
 	if test "$DH_TYPE" = "2"; then
 		cp dh.pem /etc/openvpn
 	fi
@@ -471,12 +469,14 @@
 user nobody
 group $NOGROUP
 persist-key
+dh dh.pem
 persist-tun
 keepalive 10 120
 topology subnet
-server 10.8.0.0 255.255.255.0
+server "$CIDR" 255.255.255.0
+management "$MANAGEMNET_PORT"
 ifconfig-pool-persist ipp.txt" >>/etc/openvpn/$NAME.conf
-dh dh.pem
+
 
 	# DNS resolvers
 	case $DNS in
@@ -595,7 +595,7 @@ status /var/log/openvpn/status.log
 verb 3" >>/etc/openvpn/$SERVER_NAME.conf
 
 
-cp "/etc/openvpn/$SERVER_NAME.conf" "$RUTASERV/$SERVER_NAME.conf"
+cp "/etc/openvpn/$SERVER_NAME.conf" "$RUTADIREC/$SERVER_NAME.conf"
 
 	# Create client-config-dir dir
 	mkdir -p /etc/openvpn/ccd
@@ -744,7 +744,7 @@ ignore-unknown-option block-outside-dns
 setenv opt block-outside-dns # Prevent Windows 10 DNS leak
 verb 3" >>/etc/openvpn/client-template-$SERVER_NAME.txt
 
-mkdir -p $RUTASERV/Clients
+mkdir -p $RUTADIREC/Clients
 
 chmod -R a+r "$RUTASERV"
 

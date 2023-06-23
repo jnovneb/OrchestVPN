@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_23_181826) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_23_200256) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -106,6 +106,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_23_181826) do
     t.integer "bandwidth"
     t.string "CIDR"
     t.integer "server_id", default: 1, null: false
+    t.string "hostkey"
     t.index ["server_id"], name: "index_vpns_on_server_id"
   end
 

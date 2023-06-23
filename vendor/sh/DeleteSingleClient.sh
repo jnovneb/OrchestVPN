@@ -30,7 +30,7 @@ EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
 rm -f /etc/openvpn/crl.pem
 cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
 chmod 644 /etc/openvpn/crl.pem
-rm -r "/$ruta/$CLIENT"
+rm -r "/$ruta/$CLIENT.ovpn"
 sed -i "/^$CLIENT,.*/d" /etc/openvpn/ipp.txt
 cp /etc/openvpn/easy-rsa/pki/index.txt{,.bk}
 

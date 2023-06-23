@@ -80,6 +80,15 @@ class VpnsController < ApplicationController
     if encrypt_cert.nil?
       encrypt_cert = "nil"
     end
+    puts admins
+    puts users
+    puts cidr
+    puts name
+    puts name
+    puts address
+    puts accept_IPV6
+    puts port
+    puts protocol
     puts dns
     puts primarydns
     puts secondarydns
@@ -304,12 +313,20 @@ class VpnsController < ApplicationController
   puts control_cipherDH2
   puts digest_algorithm
   puts tls_sig
+
+  @vpn = Vpn.new(vpn_params)
+  @vpn.server = Server.find_by(id: "1")
+  serv = @vpn.server.name
+  server_id = @vpn.server.id
+  puts server_id
+  @vpn.server_id = server_id
   # Llamar al script de Bash con los argumentos recopilados
-  command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/VPNInstalation.sh #{ruta} #{name} #{address} #{accept_IPV6} #{port} #{protocol} #{dns} #{primarydns} #{secondarydns} #{compressbtn} #{compression} #{encryptbtn} #{encrypt} #{encrypt_cert} #{compress_encrypt} #{key_size_encrypt} #{control_cipher} #{diffie_hellman} #{control_cipherDH} #{control_cipherDH2} #{digest_algorithm} #{tls_sig}"
+  command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/VPNInstalation.sh #{ruta} #{name} #{address} #{accept_IPV6} #{port} #{protocol} #{dns} #{primarydns} #{secondarydns} #{compressbtn} #{compression} #{encryptbtn} #{encrypt} #{encrypt_cert} #{compress_encrypt} #{key_size_encrypt} #{control_cipher} #{diffie_hellman} #{control_cipherDH} #{control_cipherDH2} #{digest_algorithm} #{tls_sig} #{serv} #{cidr}"
+
 
   system(command)
-  crt = Rails.root.join('vpn_files', "#{name}", "#{name}.crt").to_s
-  key = Rails.root.join('vpn_files', "#{name}", "#{name}.key").to_s
+  crt = Rails.root.join('vpn_files', "#{serv}", "#{name}", "#{name}.crt").to_s
+  key = Rails.root.join('vpn_files', "#{serv}","#{name}", "#{name}.key").to_s
 
   archivo = File.read(crt)
   cert = archivo.scan(/-----BEGIN CERTIFICATE-----(.*?)-----END CERTIFICATE-----/m).flatten.first
@@ -317,20 +334,18 @@ class VpnsController < ApplicationController
   archivo2 = File.read(key)
   hostkey = archivo2.scan(/-----BEGIN PRIVATE KEY-----(.*?)-----END PRIVATE KEY-----/m).flatten.first
 
-  @vpn = Vpn.new(vpn_params)
-  @vpn.server = Server.find(params[:vpn][:server_id])
+
   @vpn.update(options: opciones)
-  @vpn.update(credentials: cert)
+  @vpn.update(certificate: cert)
   @vpn.update(hostkey: hostkey)
 
   respond_to do |format|
     if @vpn.save
-
        # Actualizar el parámetro admin_vpn para el usuario actual
-       current_user_vpn = @vpn.users_vpns.find_by(user_id: current_user.id)
-       current_user_vpn.update(admin_vpn: true) if current_user_vpn
+      current_user_vpn = @vpn.users_vpns.find_by(user_id: current_user.id)
+      current_user_vpn.update(admin_vpn: true) if current_user_vpn
 
-      format.html { redirect_to server_url(@server), notice: "VPN was successfully created." }
+      format.html { redirect_to vpns_url(@vpn), notice: "VPN was successfully created." }
       format.json { render :show, status: :created, location: @vpn }
     else
       format.html { render :new, status: :unprocessable_entity }
@@ -358,7 +373,8 @@ end
     servername = @vpn.server.name
     password = "javier y pepo"
     #REVISA RUTA
-    ruta = Rails.root.join('vpn_files', "#{servername}", "Clients", "#{name}").to_s
+    ruta = Rails.root.join('vpn_files', "#{servername}","#{name}", "Clients").to_s
+    ruta2 = Rails.root.join('vpn_files', "#{servername}","#{name}").to_s
     
     @vpns = Dir.glob(File.join(ruta, '*.ovpn')) # Obtener la lista de archivos .ovpn en el directorio
     
@@ -369,6 +385,10 @@ end
       command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{nombre} #{ruta}"
       system(command)
     end
+
+    command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleServer.sh #{name} #{ruta2}"
+    system(command)
+
     #Delete registers related in the users_vpn table
     @vpn.users_vpns.destroy_all
     @vpn.destroy
@@ -389,7 +409,7 @@ end
 
     # Only allow a list of trusted parameters through.
     def vpn_params
-      params.require(:vpn).permit(:name, :description, :port, :server_id, :bandwidth, user_ids: [], vpn_admin_list: [])
+      params.require(:vpn).permit(:name, :description, :port, :bandwidth, user_ids: [], vpn_admin_list: [])
     end
 
 end

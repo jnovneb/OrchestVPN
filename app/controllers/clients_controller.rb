@@ -28,9 +28,9 @@ class ClientsController < ApplicationController
     @client.vpn_id = Vpn.find_by(name: @client.vpnName)&.id
 
     servername = @client.vpn.server.name
-    vpnName = @client.vpnName
+    vpnName = @client.vpn.name
     name = @client.name
-    ruta = Rails.root.join('vpn_files', servername, 'VPNs', vpnName).to_s
+    ruta = Rails.root.join('vpn_files', servername,vpnName, 'Clients').to_s
     password = 'javier y pepo'
 
     if @client.encrypted_password.present?
@@ -39,7 +39,8 @@ class ClientsController < ApplicationController
       contrasena = nil
     end
 
-    rt = Rails.root.join('vpn_files', servername,'VPNs', vpnName, vpnName+".conf")
+    #REVISA RUTA
+    rt = Rails.root.join('vpn_files', servername, vpnName, vpnName+".conf")
 
     archivo = File.read(rt)
     config= archivo.match(/.*(?=<ca>)/m).to_s
@@ -50,9 +51,13 @@ class ClientsController < ApplicationController
     @client.update(options: config)
 
     
-    command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/newClient.sh #{ruta} #{name} #{servername} #{contrasena} "
+    command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/newClient.sh #{ruta} #{name} #{vpnName} #{contrasena} "
     system(command)
-    rt2 = Rails.root.join('vpn_files', servername,'VPNs', vpnName, name+".ovpn")
+
+
+    #REVISA RUTA
+
+    rt2 = Rails.root.join('vpn_files', servername, vpnName, 'Clients', name+".ovpn")
 
     respond_to do |format|
       if @client.save
@@ -92,7 +97,7 @@ class ClientsController < ApplicationController
 
     password = "javier y pepo"
     nombre = @client.name
-    ruta = Rails.root.join('vpn_files', servername, 'VPNs', vpnName).to_s
+    ruta = Rails.root.join('vpn_files', servername, vpnName, 'Clients').to_s
     #Llamar al script de Bash con los argumentos recopilados
     command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{nombre} #{ruta}"
     system(command)
