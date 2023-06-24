@@ -1,0 +1,56 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            2b:77:ee:3e:9e:bf:97:fe:c8:d9:89:1b:37:93:f7:af
+        Signature Algorithm: ecdsa-with-SHA256
+        Issuer: CN=cn_80DtKKY4PQ7RLalA
+        Validity
+            Not Before: Jun 24 08:54:11 2023 GMT
+            Not After : Sep 26 08:54:11 2025 GMT
+        Subject: CN=CreoQueSi
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub:
+                    04:96:d2:50:ef:37:b9:c0:06:cf:bb:d6:06:40:08:
+                    e0:0f:9a:6b:50:5f:bb:0f:48:3d:3f:71:06:04:24:
+                    b2:a3:e8:68:60:00:72:3c:c3:a1:15:95:0c:02:45:
+                    67:26:0e:93:61:b8:27:c1:bc:04:e3:33:38:42:c8:
+                    2a:cc:7f:16:0f
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                8D:FC:13:FB:A4:89:50:8F:3F:9F:47:9A:EE:DC:DA:5B:21:EC:D2:23
+            X509v3 Authority Key Identifier: 
+                keyid:8A:44:7B:95:12:20:C6:90:9B:57:69:39:95:92:CD:70:96:4D:74:99
+                DirName:/CN=cn_80DtKKY4PQ7RLalA
+                serial:25:62:72:53:65:2C:6C:01:85:B1:96:26:10:86:58:E3:43:67:9A:3C
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Key Usage: 
+                Digital Signature, Key Encipherment
+            X509v3 Subject Alternative Name: 
+                DNS:CreoQueSi
+    Signature Algorithm: ecdsa-with-SHA256
+    Signature Value:
+        30:44:02:20:4d:05:ae:2d:fa:b3:47:a0:46:75:f8:d5:19:04:
+        e6:3e:1e:45:e8:af:f4:94:77:38:0f:75:9b:e2:32:11:71:9f:
+        02:20:49:0b:de:e7:92:14:96:9c:24:8f:d8:b8:e6:ec:38:c0:
+        6e:a2:2b:37:6a:e4:e5:f9:65:a8:33:a3:81:0a:c3:49
+-----BEGIN CERTIFICATE-----
+MIIB8DCCAZegAwIBAgIQK3fuPp6/l/7I2YkbN5P3rzAKBggqhkjOPQQDAjAeMRww
+GgYDVQQDDBNjbl84MER0S0tZNFBRN1JMYWxBMB4XDTIzMDYyNDA4NTQxMVoXDTI1
+MDkyNjA4NTQxMVowFDESMBAGA1UEAwwJQ3Jlb1F1ZVNpMFkwEwYHKoZIzj0CAQYI
+KoZIzj0DAQcDQgAEltJQ7ze5wAbPu9YGQAjgD5prUF+7D0g9P3EGBCSyo+hoYABy
+PMOhFZUMAkVnJg6TYbgnwbwE4zM4QsgqzH8WD6OBwDCBvTAJBgNVHRMEAjAAMB0G
+A1UdDgQWBBSN/BP7pIlQjz+fR5ru3NpbIezSIzBZBgNVHSMEUjBQgBSKRHuVEiDG
+kJtXaTmVks1wlk10maEipCAwHjEcMBoGA1UEAwwTY25fODBEdEtLWTRQUTdSTGFs
+QYIUJWJyU2UsbAGFsZYmEIZY40NnmjwwEwYDVR0lBAwwCgYIKwYBBQUHAwEwCwYD
+VR0PBAQDAgWgMBQGA1UdEQQNMAuCCUNyZW9RdWVTaTAKBggqhkjOPQQDAgNHADBE
+AiBNBa4t+rNHoEZ1+NUZBOY+HkXor/SUdzgPdZviMhFxnwIgSQve55IUlpwkj9i4
+5uw4wG6iKzdq5OX5Zagzo4EKw0k=
+-----END CERTIFICATE-----

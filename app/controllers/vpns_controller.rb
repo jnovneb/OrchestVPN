@@ -45,8 +45,9 @@ class VpnsController < ApplicationController
     admin_ids = params[:vpn][:vpn_admin_list].is_a?(Array) ? params[:vpn][:vpn_admin_list].reject(&:empty?) : []
     admins = User.where(id: admin_ids)
     params[:vpn][:vpn_admin_list] = admins if admins.present?
-    cidr = params[:vpn][:CIDR]
 
+    number_of_vpns = Vpn.count
+    cidr = calculate_cidr(number_of_vpns)
 
     name = params[:vpn][:name]
     address = params[:vpn][:addr]
@@ -69,6 +70,7 @@ class VpnsController < ApplicationController
     control_cipherDH2 = params[:vpn][:control_cipherDH2]
     digest_algorithm = params[:vpn][:digest_algorithm]
     tls_sig = params[:vpn][:tls_sig]
+    vpn_params[:CIDR] = cidr
 
     if primarydns.nil?
       primarydns = "nil"
@@ -322,9 +324,8 @@ class VpnsController < ApplicationController
   @vpn.server_id = server_id
   # Llamar al script de Bash con los argumentos recopilados
   command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/VPNInstalation.sh #{ruta} #{name} #{address} #{accept_IPV6} #{port} #{protocol} #{dns} #{primarydns} #{secondarydns} #{compressbtn} #{compression} #{encryptbtn} #{encrypt} #{encrypt_cert} #{compress_encrypt} #{key_size_encrypt} #{control_cipher} #{diffie_hellman} #{control_cipherDH} #{control_cipherDH2} #{digest_algorithm} #{tls_sig} #{serv} #{cidr}"
-
-
   system(command)
+  
   crt = Rails.root.join('vpn_files', "#{serv}", "#{name}", "#{name}.crt").to_s
   key = Rails.root.join('vpn_files', "#{serv}","#{name}", "#{name}.key").to_s
 
@@ -412,4 +413,13 @@ end
       params.require(:vpn).permit(:name, :description, :port, :bandwidth, user_ids: [], vpn_admin_list: [])
     end
 
+    #Calculate the CIDR automatically avoiding human failures
+    def calculate_cidr(number_of_vpns)
+      if number_of_vpns / 254 == 0
+        "10.8.#{number_of_vpns}.0"
+      else
+        x = 8 + number_of_vpns % 254
+        "10.#{x}.#{number_of_vpns % 254}.0"
+      end
+    end
 end
