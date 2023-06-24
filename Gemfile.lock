@@ -312,6 +312,7 @@ DEPENDENCIES
   devise
   devise-i18n
   factory_bot_rails
+  ffi
   importmap-rails
   jbuilder
   jquery-rails

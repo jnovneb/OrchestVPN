@@ -64,6 +64,7 @@ gem 'turbolinks'
 gem 'net-telnet'
 
 # Interface with the RRD files
+gem 'ffi'
 gem 'rrd-ffi'
 
 # Use Sass to process CSS
