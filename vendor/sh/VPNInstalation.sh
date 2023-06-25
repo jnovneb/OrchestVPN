@@ -726,7 +726,7 @@ WantedBy=multi-user.target" >/etc/systemd/system/iptables-openvpn.service
 	elif test "$PROTOCOL" = "tcp"; then
 		echo "proto tcp-client" >>/etc/openvpn/client-template-$SERVER_NAME.txt
 	fi
-	echo "remote $IP $PORT
+	echo "remote vpn.thenotes.co $PORT
 dev tun
 resolv-retry infinite
 nobind
