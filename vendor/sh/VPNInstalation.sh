@@ -474,7 +474,7 @@ persist-tun
 keepalive 10 120
 topology subnet
 server "$CIDR" 255.255.255.0
-management "$MANAGEMNET_PORT"
+management 127.0.0.1 "$MANAGEMNET_PORT"
 ifconfig-pool-persist ipp.txt" >>/etc/openvpn/$NAME.conf
 
 
@@ -701,8 +701,8 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/etc/iptables/add-openvpn-rules.sh
-ExecStop=/etc/iptables/rm-openvpn-rules.sh
+ExecStart=/etc/iptables/add-openvpn-rules-"$SERVER_NAME".sh
+ExecStop=/etc/iptables/rm-openvpn-rules-"$SERVER_NAME".sh
 RemainAfterExit=yes
 
 [Install]

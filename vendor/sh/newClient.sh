@@ -52,7 +52,6 @@ case $CONTRASENA in
 esac
 # Generar el archivo de configuración personalizado client.ovpn
 cp "/etc/openvpn/client-template-$SERVER.txt" "$RUTA/$CLIENT.ovpn"
-cp "/etc/openvpn/client-template-$SERVER.txt" "$RUTA/$CLIENT.ovpn"
 
 {
 
