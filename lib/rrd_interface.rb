@@ -32,9 +32,9 @@ class VPNtoRRD
            width: 1
     end
     RRD.graph "#{@vpn}-cli.png",
-           title: 'VPN clients',
-           width: 800, height: 250,
-           color: ['FONT#000000', 'BACK#FFFFFF'] do
+              title: 'VPN clients',
+              width: 800, height: 250,
+              color: ['FONT#000000', 'BACK#FFFFFF'] do
       line rrd_file,
            clients: :average,
            color: '#0000FF',
