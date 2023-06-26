@@ -110,9 +110,6 @@ class VpnsController < ApplicationController
                  "Custom DNS. Primary DNS: #{primarydns}. Secondary DNS: #{secondarydns}\n"
                end
 
-    # TODO: Unreachable code opciones?
-    opciones = ''
-
     if compressbtn == 'yes'
       compresstxt = 'Compression selected: '
       compresstxt += case compression
@@ -186,7 +183,7 @@ class VpnsController < ApplicationController
                               "ECDHE-ECDSA-AES-256-GCM-SHA384\n"
                             else
                               "\n"
-                            end
+                          end
                         else                     # RSA
                           case control_cipher
                             when '1'
@@ -195,7 +192,7 @@ class VpnsController < ApplicationController
                               "ECDHE-RSA-AES-256-GCM-SHA384\n"
                             else
                               "\n"
-                            end
+                          end
                         end
 
     dhtxt = 'Diffie-Hellman key: '
