@@ -32,9 +32,6 @@ class VpnsController < ApplicationController
     users = User.where(id: user_ids)
     params[:vpn][:users] = users if users.present?
 
-    # TODO: Is it necessary here? Is it reachable? Check it
-    cidr = params[:vpn][:CIDR]
-
     # Verificar y asignar administradores seleccionados
     admin_ids = params[:vpn][:vpn_admin_list].reject(&:empty?) if params[:vpn][:vpn_admin_list]
     admins = User.where(id: admin_ids)
@@ -70,6 +67,7 @@ class VpnsController < ApplicationController
     control_cipherDH2 = params[:vpn][:control_cipherDH2]
     digest_algorithm = params[:vpn][:digest_algorithm]
     tls_sig = params[:vpn][:tls_sig]
+
     vpn_params[:CIDR] = cidr
 
     primarydns   = 'nil' if primarydns.nil?
@@ -82,172 +80,67 @@ class VpnsController < ApplicationController
          control_cipher, diffie_hellman, control_cipherDH, control_cipherDH2,
          digest_algorithm, tls_sig
 
-    dnstext = 'DNS option selected: '
-    dnstext += case dns
-               when '1'
-                 "Current system resolvers\n"
-               when '2'
-                 "Self-hosted DNS\n"
-               when '3'
-                 "Cloudflare\n"
-               when '4'
-                 "Quad9\n"
-               when '5'
-                 "Quad9 uncensored\n"
-               when '6'
-                 "FDN (France)\n"
-               when '7'
-                 "OpenDNS\n"
-               when '9'
-                 "Google\n"
-               when '10'
-                 "Yandex Basic (Russia)\n"
-               when '11'
-                 "AdGuard DNS\n"
-               when '12'
-                 "NextDNS\n"
-               when '13'
-                 "Custom DNS. Primary DNS: #{primarydns}. Secondary DNS: #{secondarydns}\n"
-               end
+    dns_types = { '1': "Current system resolvers\n", '2': "Self-hosted DNS\n", '3': "Cloudflare\n",
+                  '4': "Quad9\n", '5': "Quad9 uncensored\n", '6': "FDN (France)\n", '7': "OpenDNS\n",
+                  '9': "Google\n", '10': "Yandex Basic (Russia)\n", '11': "AdGuard DNS\n",
+                  '12': "NextDNS\n", '13': "Custom DNS. Primary DNS: #{primarydns}. Secondary DNS: #{secondarydns}\n" }
+    dnstext = "DNS option selected: #{dns_types[dns]}"
 
     if compressbtn == 'yes'
-      compresstxt = 'Compression selected: '
-      compresstxt += case compression
-                     when '1'
-                       "lz4-v2\n"
-                     when '2'
-                       "lz4\n"
-                     when '3'
-                       "lzo\n"
-                     else
-                       "Error\n"
-                     end
+      compression_types = Hash.new("Error\n")
+      compression_types.merge { '1': "lz4-v2\n", '2': "lz4\n", '3': "lzo\n"}
+      compresstxt = "Compression selected: #{compression_types[compression]}"
     end
+
+    encrypttxt = "Default encryption: CIPHER=AES-128-GCM, CERT_TYPE=ECDSA, CERT_CURVE=prime256v1, CC_CIPHER=TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256, DH_TYPE=ECDH, DH_CURVE=prime256v1, HMAC_ALG=SHA256, TLS_SIG=tls-crypt\n"
+    curveencrypttxt = ''
+    sizekeytxt = ''
     if encryptbtn == 'yes'
-      encrypttxt = 'Encryption selected: '
-      encrypttxt += case encrypt
-                    when '1'
-                      'AES-128-GCM. '
-                    when '2'
-                      'AES-192-GCM. '
-                    when '3'
-                      'AES-256-GCM. '
-                    when '4'
-                      'AES-128-CBC. '
-                    when '5'
-                      'AES-192-CBC. '
-                    when '6'
-                      'AES-256-CBC. '
-                    end
-      encrypttxt += 'Using: '
-      encrypttxt += case encrypt_cert
-                    when '1'
-                      "ECDSA\n"
-                    when '2'
-                      "RSA\n"
-                    end
-      curveencrypttxt = 'Curve selected: '
-      curveencrypttxt += case compress_encrypt
-                         when '1'
-                           "prime256v1\n"
-                         when '2'
-                           "secp384r1\n"
-                         when '3'
-                           "secp521r1\n"
-                         else
-                           "\n"
-                         end
-      sizekeytxt = 'Size selected: '
-      sizekeytxt += case key_size_encrypt
-                    when '1'
-                      "2048 bits\n"
-                    when '2'
-                      "3072 bits\n"
-                    when '3'
-                      "4096 bits\n"
-                    else
-                      "\n"
-                    end
-    else
-      encrypttxt = "Default encryption: CIPHER=AES-128-GCM, CERT_TYPE=ECDSA, CERT_CURVE=prime256v1, CC_CIPHER=TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256, DH_TYPE=ECDH, DH_CURVE=prime256v1, HMAC_ALG=SHA256, TLS_SIG=tls-crypt\n"
-      curveencrypttxt = ''
-      sizekeytxt = ''
+      encryption_types = { '1': "AES-128-GCM\n", '2': "AES-192-GCM\n", '3': "AES-256-GCM\n",
+                           '4': "AES-128-CBC\n", '5': "AES-192-CBC\n", '6': "AES-256-CBC\n" }
+      encrypttxt = "Encryption selected: #{encryption_types[encrypt]}"
+      encrypt_cert_types = { '1': "ECDSA\n", '2': "RSA\n" }
+      encrypttxt += "Using: #{encrypt_cert_types[encrypt_cert]}"
+
+      curve_encrypt_types = Hash.new("\n")
+      curve_encrypt_types.merge { '1': "prime256v1\n", '2': "secp384r1\n", '3': "secp521r1\n" }
+      curveencrypttxt = 'Curve selected: ' + curve_encrypt_types[compress_encrypt]
+
+      key_size_types = Hash.new("\n")
+      key_size_types.merge { '1': "2048 bits\n", '2': "3072 bits\n", '3': "4096 bits\n" }
+      sizekeytxt = 'Size selected: ' + key_size_types[key_size_encrypt]
     end
 
-    controlCiphertxt = 'Cipher for the control channel: '
-    controlCiphertxt += if encrypt_cert == '1'   # ECDSA
-                          case control_cipher
-                            when '1'
-                              "ECDHE-ECDSA-AES-128-GCM-SHA256\n"
-                            when '2'
-                              "ECDHE-ECDSA-AES-256-GCM-SHA384\n"
-                            else
-                              "\n"
-                          end
-                        else                     # RSA
-                          case control_cipher
-                            when '1'
-                              "ECDHE-RSA-AES-128-GCM-SHA256\n"
-                            when '2'
-                              "ECDHE-RSA-AES-256-GCM-SHA384\n"
-                            else
-                              "\n"
-                          end
-                        end
+    control_cipher_types_ECDSA = Hash.new("\n")
+    control_cipher_types_ECDSA.merge { '1': "ECDHE-ECDSA-AES-128-GCM-SHA256\n", '2': "ECDHE-ECDSA-AES-256-GCM-SHA384\n" }
+    control_cipher_types_RSA   = Hash.new("\n")
+    control_cipher_types_RSA.merge   { '1': "ECDHE-RSA-AES-128-GCM-SHA256\n", '2': "ECDHE-RSA-AES-256-GCM-SHA384\n" }
+    controlCiphertxt = 'Cipher for the control channel: ' + encrypt_cert == '1' ?
+                                                              control_cipher_types_ECDSA[control_cipher] :
+                                                              control_cipher_types_RSA[control_cipher]
+    dh_types = Hash.new("\n")
+    dh_types.merge { '1': "ECDH\n", '2': "DH\n" }
+    dhtxt = 'Diffie-Hellman key: ' + dh_types[diffie_hellman]
 
-    dhtxt = 'Diffie-Hellman key: '
-    dhtxt += case diffie_hellman
-             when '1'
-               "ECDH\n"
-             when '2'
-               "DH\n"
-             else
-               "\n"
-             end
-    dhopttxt = 'Curve type: '
-    dhopttxt += case control_cipherDH
-                when '1'
-                  "prime256v1\n"
-                when '2'
-                  "secp384r1\n"
-                when '3'
-                  "secp521r1\n"
-                else
-                  "\n"
-                end
-    dhopttxt2 = 'Size of the Diffie-Hellman key: '
-    dhopttxt2 += case control_cipherDH2
-                 when '1'
-                   "2048 bits\n"
-                 when '2'
-                   "3072 bits\n"
-                 when '3'
-                   "4096 bits\n"
-                 else
-                   "\n"
-                 end
-    digesttxt = 'Digest algorithm for HMAC: '
-    digesttxt += case digest_algorithm
-                 when '1'
-                   "SHA-256\n"
-                 when '2'
-                   "SHA-384\n"
-                 when '3'
-                   "SHA-512\n"
-                 else
-                   "\n"
-                 end
-    tlstxt = 'Additional security: '
-    tlstxt += case tls_sig
-              when '1'
-                "tls-crypt\n"
-              when '2'
-                "tls-auth\n"
-              else
-                "\n"
-              end
+    dhopt_types = Hash.new("\n")
+    dhopt_types.merge { '1': "prime256v1\n", '2': "secp384r1\n", '3': "secp521r1\n" }
+    dhopttxt = 'Curve type: ' + dhopt_types[control_cipherDH]
 
-    opciones = "#{name}\n#{address}\n#{port}\n#{protocol}\n#{dnstext}#{compresstxt}#{encrypttxt}#{curveencrypttxt}#{sizekeytxt}#{controlCiphertxt}#{dhtxt}#{dhopttxt}#{dhopttxt2}#{digesttxt}#{tlstxt}"
+    dh2_types = Hash.new("\n")
+    dh2_types.merge { '1': "2048 bits\n", '2': "3072 bits\n", '3': "4096 bits\n" }
+    dhopttxt2 = 'Size of the Diffie-Hellman key: ' + dh2_types[control_cipherDH2]
+
+    digest_types = Hash.new("\n")
+    digest_types.merge { '1': "SHA-256\n", '2': "SHA-384\n", '3': "SHA-512\n" }
+    digesttxt = 'Digest algorithm for HMAC: ' + digest_types[digest_algorithm]
+
+    tls_types = Hash.new("\n")
+    tls_types.merge { '1': "tls-crypt\n", '2': "tls-auth\n" }
+    tlstxt = 'Additional security: ' + tls_types[tls_sig]
+
+    opciones =  "#{name}\n#{address}\n#{port}\n#{protocol}\n#{dnstext}\n#{compresstxt}\n"
+    opciones += "#{encrypttxt}\n#{curveencrypttxt}\n#{sizekeytxt}\n#{controlCiphertxt}\n"
+    opciones += "#{dhtxt}\n#{dhopttxt}\n#{dhopttxt2}\n#{digesttxt}\n#{tlstxt}\n"
     puts opciones
 
     ruta = Rails.root.join('vpn_files')
