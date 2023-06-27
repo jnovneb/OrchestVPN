@@ -1,7 +1,7 @@
 # VPN orchestrator README
 
 * FRAMEWORK:
-  Ruby 3.2.2 + Rails 7.0.5
+  Ruby 3.2.2 + Rails 7.0.5.1
  
 * GEMS:
   Devise + RSpec + factory_bot + Tailwind CSS + SQLite

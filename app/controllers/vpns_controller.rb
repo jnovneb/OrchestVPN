@@ -1,7 +1,7 @@
 class VpnsController < ApplicationController
   before_action :set_vpn, only: %i[ show edit update destroy ]
 
-  @password = 'javier y pepo'
+  @password = Rails.application.credentials.sudo_pass
 
   # GET /vpns or /vpns.json
   def index
@@ -38,7 +38,7 @@ class VpnsController < ApplicationController
     params[:vpn][:vpn_admin_list] = admins if admins.present?
 
     # WHAAAAAAAAAAAT THE FFFFFFFFFF
-    # TODO: Refactorizar esto
+    # TODO: Refactor this... mess?
     admin_ids = params[:vpn][:vpn_admin_list].is_a?(Array) ? params[:vpn][:vpn_admin_list].reject(&:empty?) : []
     admins = User.where(id: admin_ids)
     params[:vpn][:vpn_admin_list] = admins if admins.present?
@@ -84,63 +84,63 @@ class VpnsController < ApplicationController
                   '4': "Quad9\n", '5': "Quad9 uncensored\n", '6': "FDN (France)\n", '7': "OpenDNS\n",
                   '9': "Google\n", '10': "Yandex Basic (Russia)\n", '11': "AdGuard DNS\n",
                   '12': "NextDNS\n", '13': "Custom DNS. Primary DNS: #{primarydns}. Secondary DNS: #{secondarydns}\n" }
-    dnstext = "DNS option selected: #{dns_types[dns]}"
+    dns_txt = "DNS option selected: #{dns_types[dns]}"
 
     if compressbtn == 'yes'
       compression_types = Hash.new("Error\n")
-      compression_types.merge { '1': "lz4-v2\n", '2': "lz4\n", '3': "lzo\n"}
-      compresstxt = "Compression selected: #{compression_types[compression]}"
+      compression_types.merge( {'1': "lz4-v2\n", '2': "lz4\n", '3': "lzo\n"} )
+      compress_txt = "Compression selected: #{compression_types[compression]}"
     end
 
-    encrypttxt = "Default encryption: CIPHER=AES-128-GCM, CERT_TYPE=ECDSA, CERT_CURVE=prime256v1, CC_CIPHER=TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256, DH_TYPE=ECDH, DH_CURVE=prime256v1, HMAC_ALG=SHA256, TLS_SIG=tls-crypt\n"
-    curveencrypttxt = ''
-    sizekeytxt = ''
+    encrypt_txt = "Default encryption: CIPHER=AES-128-GCM, CERT_TYPE=ECDSA, CERT_CURVE=prime256v1, CC_CIPHER=TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256, DH_TYPE=ECDH, DH_CURVE=prime256v1, HMAC_ALG=SHA256, TLS_SIG=tls-crypt\n"
+    curve_encrypt_txt = ''
+    key_size_txt = ''
     if encryptbtn == 'yes'
       encryption_types = { '1': "AES-128-GCM\n", '2': "AES-192-GCM\n", '3': "AES-256-GCM\n",
                            '4': "AES-128-CBC\n", '5': "AES-192-CBC\n", '6': "AES-256-CBC\n" }
-      encrypttxt = "Encryption selected: #{encryption_types[encrypt]}"
+      encrypt_txt = "Encryption selected: #{encryption_types[encrypt]}"
       encrypt_cert_types = { '1': "ECDSA\n", '2': "RSA\n" }
-      encrypttxt += "Using: #{encrypt_cert_types[encrypt_cert]}"
+      encrypt_txt += "Using: #{encrypt_cert_types[encrypt_cert]}"
 
       curve_encrypt_types = Hash.new("\n")
-      curve_encrypt_types.merge { '1': "prime256v1\n", '2': "secp384r1\n", '3': "secp521r1\n" }
-      curveencrypttxt = 'Curve selected: ' + curve_encrypt_types[compress_encrypt]
+      curve_encrypt_types.merge( {'1': "prime256v1\n", '2': "secp384r1\n", '3': "secp521r1\n"} )
+      curve_encrypt_txt = 'Curve selected: ' + curve_encrypt_types[compress_encrypt]
 
       key_size_types = Hash.new("\n")
-      key_size_types.merge { '1': "2048 bits\n", '2': "3072 bits\n", '3': "4096 bits\n" }
-      sizekeytxt = 'Size selected: ' + key_size_types[key_size_encrypt]
+      key_size_types.merge( {'1': "2048 bits\n", '2': "3072 bits\n", '3': "4096 bits\n"} )
+      key_size_txt = 'Size selected: ' + key_size_types[key_size_encrypt]
     end
 
     control_cipher_types_ECDSA = Hash.new("\n")
-    control_cipher_types_ECDSA.merge { '1': "ECDHE-ECDSA-AES-128-GCM-SHA256\n", '2': "ECDHE-ECDSA-AES-256-GCM-SHA384\n" }
+    control_cipher_types_ECDSA.merge( {'1': "ECDHE-ECDSA-AES-128-GCM-SHA256\n", '2': "ECDHE-ECDSA-AES-256-GCM-SHA384\n"} )
     control_cipher_types_RSA   = Hash.new("\n")
-    control_cipher_types_RSA.merge   { '1': "ECDHE-RSA-AES-128-GCM-SHA256\n", '2': "ECDHE-RSA-AES-256-GCM-SHA384\n" }
-    controlCiphertxt = 'Cipher for the control channel: ' + encrypt_cert == '1' ?
+    control_cipher_types_RSA.merge( {'1': "ECDHE-RSA-AES-128-GCM-SHA256\n", '2': "ECDHE-RSA-AES-256-GCM-SHA384\n"} )
+    control_cipher_txt = 'Cipher for the control channel: ' + encrypt_cert == '1' ?
                                                               control_cipher_types_ECDSA[control_cipher] :
                                                               control_cipher_types_RSA[control_cipher]
     dh_types = Hash.new("\n")
-    dh_types.merge { '1': "ECDH\n", '2': "DH\n" }
-    dhtxt = 'Diffie-Hellman key: ' + dh_types[diffie_hellman]
+    dh_types.merge( {'1': "ECDH\n", '2': "DH\n"} )
+    dh_txt = 'Diffie-Hellman key: ' + dh_types[diffie_hellman]
 
     dhopt_types = Hash.new("\n")
-    dhopt_types.merge { '1': "prime256v1\n", '2': "secp384r1\n", '3': "secp521r1\n" }
-    dhopttxt = 'Curve type: ' + dhopt_types[control_cipherDH]
+    dhopt_types.merge( {'1': "prime256v1\n", '2': "secp384r1\n", '3': "secp521r1\n"} )
+    dhopt_txt = 'Curve type: ' + dhopt_types[control_cipherDH]
 
     dh2_types = Hash.new("\n")
-    dh2_types.merge { '1': "2048 bits\n", '2': "3072 bits\n", '3': "4096 bits\n" }
-    dhopttxt2 = 'Size of the Diffie-Hellman key: ' + dh2_types[control_cipherDH2]
+    dh2_types.merge( {'1': "2048 bits\n", '2': "3072 bits\n", '3': "4096 bits\n"} )
+    dh2_txt = 'Size of the Diffie-Hellman key: ' + dh2_types[control_cipherDH2]
 
     digest_types = Hash.new("\n")
-    digest_types.merge { '1': "SHA-256\n", '2': "SHA-384\n", '3': "SHA-512\n" }
-    digesttxt = 'Digest algorithm for HMAC: ' + digest_types[digest_algorithm]
+    digest_types.merge( {'1': "SHA-256\n", '2': "SHA-384\n", '3': "SHA-512\n"} )
+    digest_txt = 'Digest algorithm for HMAC: ' + digest_types[digest_algorithm]
 
     tls_types = Hash.new("\n")
-    tls_types.merge { '1': "tls-crypt\n", '2': "tls-auth\n" }
-    tlstxt = 'Additional security: ' + tls_types[tls_sig]
+    tls_types.merge( {'1': "tls-crypt\n", '2': "tls-auth\n"} )
+    tls_txt = 'Additional security: ' + tls_types[tls_sig]
 
-    opciones =  "#{name}\n#{address}\n#{port}\n#{protocol}\n#{dnstext}\n#{compresstxt}\n"
-    opciones += "#{encrypttxt}\n#{curveencrypttxt}\n#{sizekeytxt}\n#{controlCiphertxt}\n"
-    opciones += "#{dhtxt}\n#{dhopttxt}\n#{dhopttxt2}\n#{digesttxt}\n#{tlstxt}\n"
+    opciones =  "#{name}\n#{address}\n#{port}\n#{protocol}\n#{dns_txt}\n#{compress_txt}\n"
+    opciones += "#{encrypt_txt}\n#{curve_encrypt_txt}\n#{key_size_txt}\n#{control_cipher_txt}\n"
+    opciones += "#{dh_txt}\n#{dhopt_txt}\n#{dh2_txt}\n#{digest_txt}\n#{tls_txt}\n"
     puts opciones
 
     ruta = Rails.root.join('vpn_files')
@@ -157,10 +157,10 @@ class VpnsController < ApplicationController
     puts server_id
     @vpn.server_id = server_id
     # Llamar al script de Bash con los argumentos recopilados
-    command = "echo '#{@password}' | sudo -E -S #{Rails.root}/vendor/sh/VPNInstalation.sh #{ruta} #{name} #{address} #{accept_IPV6} #{port} #{protocol} #{dns} #{primarydns} #{secondarydns} #{compressbtn} #{compression} #{encryptbtn} #{encrypt} #{encrypt_cert} #{compress_encrypt} #{key_size_encrypt} #{control_cipher} #{diffie_hellman} #{control_cipherDH} #{control_cipherDH2} #{digest_algorithm} #{tls_sig} #{serv} #{cidr}"
+    command = "echo '#{@password}' | sudo -E -S #{Rails.root.to_s}/vendor/sh/VPNInstalation.sh #{ruta} #{name} #{address} #{accept_IPV6} #{port} #{protocol} #{dns} #{primarydns} #{secondarydns} #{compressbtn} #{compression} #{encryptbtn} #{encrypt} #{encrypt_cert} #{compress_encrypt} #{key_size_encrypt} #{control_cipher} #{diffie_hellman} #{control_cipherDH} #{control_cipherDH2} #{digest_algorithm} #{tls_sig} #{serv} #{cidr}"
     system(command)
 
-    vpn_files_path = Rails.root.join('vpn_files', "#{serv}", "#{name}")
+    vpn_files_path = Rails.root.join('vpn_files', "#{serv}", "#{name}").to_s
     crt = vpn_files_path + "#{name}.crt"
     key = vpn_files_path + "#{name}.key"
 
@@ -207,24 +207,25 @@ class VpnsController < ApplicationController
     name = @vpn.name
     servername = @vpn.server.name
 
-    #REVISA RUTA
-    ruta = Rails.root.join('vpn_files', "#{servername}","#{name}", 'Clients')
-    ruta2 = Rails.root.join('vpn_files', "#{servername}","#{name}")
+    # TODO: Check these paths
+    ruta  = Rails.root.join('vpn_files', "#{servername}","#{name}", 'Clients').to_s
+    ruta2 = Rails.root.join('vpn_files', "#{servername}","#{name}").to_s
 
-    @vpns = Dir.glob(File.join(ruta, '*.ovpn')) # Obtener la lista de archivos .ovpn en el directorio
+    # Obtener la lista de archivos .ovpn en el directorio
+    @vpns = Dir.glob(File.join(ruta, '*.ovpn'))
 
     @vpns.each do |archivo|
-      nombre = File.basename(archivo, '.ovpn') # Obtener el nombre del archivo sin la extensión .ovpn
-
+      # Obtener el nombre del archivo sin la extensión .ovpn
+      nombre = File.basename(archivo, '.ovpn')
       # Llamar al script de Bash con los argumentos recopilados
-      command = "echo '#{@password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{nombre} #{ruta}"
+      command = "echo '#{@password}' | sudo -E -S #{Rails.root.to_}/vendor/sh/DeleteSingleClient.sh #{nombre} #{ruta}"
       system(command)
     end
 
     command = "echo '#{@password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleServer.sh #{name} #{ruta2}"
     system(command)
 
-    #Delete registers related in the users_vpn table
+    # Delete records related to the users_vpn table
     @vpn.users_vpns.destroy_all
     @vpn.destroy
 
@@ -238,7 +239,7 @@ class VpnsController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
+  # Use callbacks to share common setup or constraints between actions
   def set_vpn
     @vpn = Vpn.find(params[:id])
   end
