@@ -55,8 +55,8 @@ cp "/etc/openvpn/client-template-$SERVER.txt" "$RUTA/$CLIENT.ovpn"
 
 {
 
-  echo "ifconfig-push $CLIENTIP 255.255.255.0"
-  echo "ifconfig-push $CLIENTIPOUT 255.255.255.0"
+  echo "ifconfig $CLIENTIP 255.255.255.0"
+  echo "ifconfig $CLIENTIPOUT 255.255.255.0"
 
   echo "<ca>"
   cat "/etc/openvpn/easy-rsa/pki/ca.crt"
