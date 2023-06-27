@@ -88,7 +88,7 @@ class VpnsController < ApplicationController
 
     if compressbtn == 'yes'
       compression_types = Hash.new("Error\n")
-      compression_types.merge { '1': "lz4-v2\n", '2': "lz4\n", '3': "lzo\n"}
+      compression_types.merge( {'1': "lz4-v2\n", '2': "lz4\n", '3': "lzo\n"} )
       compress_txt = "Compression selected: #{compression_types[compression]}"
     end
 
@@ -103,39 +103,39 @@ class VpnsController < ApplicationController
       encrypt_txt += "Using: #{encrypt_cert_types[encrypt_cert]}"
 
       curve_encrypt_types = Hash.new("\n")
-      curve_encrypt_types.merge { '1': "prime256v1\n", '2': "secp384r1\n", '3': "secp521r1\n" }
+      curve_encrypt_types.merge( {'1': "prime256v1\n", '2': "secp384r1\n", '3': "secp521r1\n"} )
       curve_encrypt_txt = 'Curve selected: ' + curve_encrypt_types[compress_encrypt]
 
       key_size_types = Hash.new("\n")
-      key_size_types.merge { '1': "2048 bits\n", '2': "3072 bits\n", '3': "4096 bits\n" }
+      key_size_types.merge( {'1': "2048 bits\n", '2': "3072 bits\n", '3': "4096 bits\n"} )
       key_size_txt = 'Size selected: ' + key_size_types[key_size_encrypt]
     end
 
     control_cipher_types_ECDSA = Hash.new("\n")
-    control_cipher_types_ECDSA.merge { '1': "ECDHE-ECDSA-AES-128-GCM-SHA256\n", '2': "ECDHE-ECDSA-AES-256-GCM-SHA384\n" }
+    control_cipher_types_ECDSA.merge( {'1': "ECDHE-ECDSA-AES-128-GCM-SHA256\n", '2': "ECDHE-ECDSA-AES-256-GCM-SHA384\n"} )
     control_cipher_types_RSA   = Hash.new("\n")
-    control_cipher_types_RSA.merge   { '1': "ECDHE-RSA-AES-128-GCM-SHA256\n", '2': "ECDHE-RSA-AES-256-GCM-SHA384\n" }
+    control_cipher_types_RSA.merge( {'1': "ECDHE-RSA-AES-128-GCM-SHA256\n", '2': "ECDHE-RSA-AES-256-GCM-SHA384\n"} )
     control_cipher_txt = 'Cipher for the control channel: ' + encrypt_cert == '1' ?
                                                               control_cipher_types_ECDSA[control_cipher] :
                                                               control_cipher_types_RSA[control_cipher]
     dh_types = Hash.new("\n")
-    dh_types.merge { '1': "ECDH\n", '2': "DH\n" }
+    dh_types.merge( {'1': "ECDH\n", '2': "DH\n"} )
     dh_txt = 'Diffie-Hellman key: ' + dh_types[diffie_hellman]
 
     dhopt_types = Hash.new("\n")
-    dhopt_types.merge { '1': "prime256v1\n", '2': "secp384r1\n", '3': "secp521r1\n" }
+    dhopt_types.merge( {'1': "prime256v1\n", '2': "secp384r1\n", '3': "secp521r1\n"} )
     dhopt_txt = 'Curve type: ' + dhopt_types[control_cipherDH]
 
     dh2_types = Hash.new("\n")
-    dh2_types.merge { '1': "2048 bits\n", '2': "3072 bits\n", '3': "4096 bits\n" }
+    dh2_types.merge( {'1': "2048 bits\n", '2': "3072 bits\n", '3': "4096 bits\n"} )
     dh2_txt = 'Size of the Diffie-Hellman key: ' + dh2_types[control_cipherDH2]
 
     digest_types = Hash.new("\n")
-    digest_types.merge { '1': "SHA-256\n", '2': "SHA-384\n", '3': "SHA-512\n" }
+    digest_types.merge( {'1': "SHA-256\n", '2': "SHA-384\n", '3': "SHA-512\n"} )
     digest_txt = 'Digest algorithm for HMAC: ' + digest_types[digest_algorithm]
 
     tls_types = Hash.new("\n")
-    tls_types.merge { '1': "tls-crypt\n", '2': "tls-auth\n" }
+    tls_types.merge( {'1': "tls-crypt\n", '2': "tls-auth\n"} )
     tls_txt = 'Additional security: ' + tls_types[tls_sig]
 
     opciones =  "#{name}\n#{address}\n#{port}\n#{protocol}\n#{dns_txt}\n#{compress_txt}\n"
