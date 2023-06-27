@@ -7,7 +7,7 @@
         <th>Connect</th>
         <th>Settings</th>
         <% if current_user.admin %>
-          <th>Monitore</th>
+          <th>Monitor</th>
         <% end %>
       </tr>
     </thead>
@@ -55,7 +55,7 @@
   </table>
 </div>
 <script>
-document.querySelectorAll('.btnc').forEach((button) => {
+document.querySelectorAll('#btnc').forEach((button) => {
   button.addEventListener('click', (event) => {
     event.preventDefault();
     const client_id = event.target.dataset.clientId;
