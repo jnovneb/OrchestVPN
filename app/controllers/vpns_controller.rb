@@ -161,8 +161,8 @@ class VpnsController < ApplicationController
     system(command)
 
     vpn_files_path = Rails.root.join('vpn_files', "#{serv}", "#{name}").to_s
-    crt = vpn_files_path + "#{name}.crt"
-    key = vpn_files_path + "#{name}.key"
+    crt = vpn_files_path + "/#{name}.crt"
+    key = vpn_files_path + "/#{name}.key"
 
     archivo = File.read(crt)
     cert = archivo.scan(/-----BEGIN CERTIFICATE-----(.*?)-----END CERTIFICATE-----/m).flatten.first

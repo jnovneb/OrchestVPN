@@ -3,7 +3,6 @@
     <thead>
       <tr>
         <th>Name</th>
-        <th>Description</th>
         <th>Role</th>
         <th>Connect</th>
         <th>Settings</th>
@@ -17,16 +16,17 @@
       <% @clients.each do |client| %>
         <tr>
           <td><%= client[:name] %></td>
-          <td><%= client[:desc] %></td>
           <% if current_user.admin_vpn %>
             <td>Admin</td>
           <% else %>
             <td>User</td>
           <% end %>
           <td>
-            <%= button_to "Connect", connect_path(client_id: client.id), class: "btnc", data: { client_id: client.id, client_name: client.name } %>
+            <%= button_to "Download", connect_path(client_id: client.id), id: "btnc", class: "btn btn-primary", data: { client_id: client.id, client_name: client.name } %>
           </td>
-          <td><%= client[:options] %></td>
+          <td>
+            <%= link_to "Show", client_path(client), class: "btn btn-primary" %>
+          </td>
           <% if current_user.admin %>
             <td><%= client[:monitore] %></td>
           <% end %>
@@ -36,17 +36,18 @@
       <% @clients_vpns.each do |client| %>
         <tr>
           <td><%= client[:name] %></td>
-          <td><%= client[:desc] %></td>
           <% if current_user.admin_vpn %>
             <td>Admin</td>
           <% else %>
             <td>User</td>
           <% end %>
           <td>
-            <%= button_to "Connect", connect_path(client_id: client.id), class: "btnc", data: { client_id: client.id, client_name: client.name } %>
+            <%= button_to "Download", connect_path(client_id: client.id), id: "btnc", class: "btn btn-primary", data: { client_id: client.id, client_name: client.name } %>
           </td>
           </td>
-          <td><%= client[:options] %></td>
+          <td>
+            <%= link_to "Show", client_path(client), class: "btn btn-primary" %>
+          </td>
         </tr>
       <% end %>
     <% end %>
