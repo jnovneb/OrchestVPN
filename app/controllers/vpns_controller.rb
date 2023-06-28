@@ -74,11 +74,11 @@ class VpnsController < ApplicationController
     secondarydns = 'nil' if secondarydns.nil?
     encrypt_cert = 'nil' if encrypt_cert.nil?
 
-    puts admins, users, cidr, name, address, accept_IPV6, port, protocol, dns,
-         primarydns, secondarydns, compressbtn, compression, encryptbtn,
-         encrypt, encrypt_cert, compress_encrypt, key_size_encrypt,
-         control_cipher, diffie_hellman, control_cipherDH, control_cipherDH2,
-         digest_algorithm, tls_sig
+    puts 'Params in variables:', admins, users, cidr, name, address, accept_IPV6,
+         port, protocol, dns, primarydns, secondarydns, compressbtn,
+         compression, encryptbtn, encrypt, encrypt_cert, compress_encrypt,
+         key_size_encrypt, control_cipher, diffie_hellman, control_cipherDH,
+         control_cipherDH2, digest_algorithm, tls_sig
 
     dns_types = { '1': "Current system resolvers\n", '2': "Self-hosted DNS\n", '3': "Cloudflare\n",
                   '4': "Quad9\n", '5': "Quad9 uncensored\n", '6': "FDN (France)\n", '7': "OpenDNS\n",
@@ -88,7 +88,7 @@ class VpnsController < ApplicationController
 
     if compressbtn == 'yes'
       compression_types = Hash.new("Error\n")
-      compression_types.merge( {'1': "lz4-v2\n", '2': "lz4\n", '3': "lzo\n"} )
+      compression_types.merge!({'1' => "lz4-v2\n", '2' => "lz4\n", '3' => "lzo\n"})
       compress_txt = "Compression selected: #{compression_types[compression]}"
     end
 
@@ -96,52 +96,53 @@ class VpnsController < ApplicationController
     curve_encrypt_txt = ''
     key_size_txt = ''
     if encryptbtn == 'yes'
-      encryption_types = { '1': "AES-128-GCM\n", '2': "AES-192-GCM\n", '3': "AES-256-GCM\n",
-                           '4': "AES-128-CBC\n", '5': "AES-192-CBC\n", '6': "AES-256-CBC\n" }
+      puts 'Encryptbtn is yes'
+      encryption_types = { '1' => "AES-128-GCM\n", '2' => "AES-192-GCM\n", '3' => "AES-256-GCM\n",
+                           '4' => "AES-128-CBC\n", '5' => "AES-192-CBC\n", '6' => "AES-256-CBC\n" }
       encrypt_txt = "Encryption selected: #{encryption_types[encrypt]}"
-      encrypt_cert_types = { '1': "ECDSA\n", '2': "RSA\n" }
+      encrypt_cert_types = { '1' => "ECDSA\n", '2' => "RSA\n" }
       encrypt_txt += "Using: #{encrypt_cert_types[encrypt_cert]}"
 
       curve_encrypt_types = Hash.new("\n")
-      curve_encrypt_types.merge( {'1': "prime256v1\n", '2': "secp384r1\n", '3': "secp521r1\n"} )
+      curve_encrypt_types.merge!( {'1' => "prime256v1\n", '2' => "secp384r1\n", '3' => "secp521r1\n"} )
       curve_encrypt_txt = 'Curve selected: ' + curve_encrypt_types[compress_encrypt]
 
       key_size_types = Hash.new("\n")
-      key_size_types.merge( {'1': "2048 bits\n", '2': "3072 bits\n", '3': "4096 bits\n"} )
+      key_size_types.merge!( {'1' => "2048 bits\n", '2' => "3072 bits\n", '3' => "4096 bits\n"} )
       key_size_txt = 'Size selected: ' + key_size_types[key_size_encrypt]
     end
 
     control_cipher_types_ECDSA = Hash.new("\n")
-    control_cipher_types_ECDSA.merge( {'1': "ECDHE-ECDSA-AES-128-GCM-SHA256\n", '2': "ECDHE-ECDSA-AES-256-GCM-SHA384\n"} )
+    control_cipher_types_ECDSA.merge!({'1' => "ECDHE-ECDSA-AES-128-GCM-SHA256\n", '2' => "ECDHE-ECDSA-AES-256-GCM-SHA384\n"})
     control_cipher_types_RSA   = Hash.new("\n")
-    control_cipher_types_RSA.merge( {'1': "ECDHE-RSA-AES-128-GCM-SHA256\n", '2': "ECDHE-RSA-AES-256-GCM-SHA384\n"} )
+    control_cipher_types_RSA.merge!( {'1' => "ECDHE-RSA-AES-128-GCM-SHA256\n", '2' => "ECDHE-RSA-AES-256-GCM-SHA384\n"} )
     control_cipher_txt = 'Cipher for the control channel: ' + encrypt_cert == '1' ?
-                                                              control_cipher_types_ECDSA[control_cipher] :
-                                                              control_cipher_types_RSA[control_cipher]
+                                                                control_cipher_types_ECDSA[control_cipher] :
+                                                                control_cipher_types_RSA[control_cipher]
     dh_types = Hash.new("\n")
-    dh_types.merge( {'1': "ECDH\n", '2': "DH\n"} )
+    dh_types.merge!( {'1' => "ECDH\n", '2' => "DH\n"} )
     dh_txt = 'Diffie-Hellman key: ' + dh_types[diffie_hellman]
 
     dhopt_types = Hash.new("\n")
-    dhopt_types.merge( {'1': "prime256v1\n", '2': "secp384r1\n", '3': "secp521r1\n"} )
+    dhopt_types.merge!( {'1' => "prime256v1\n", '2' => "secp384r1\n", '3' => "secp521r1\n"} )
     dhopt_txt = 'Curve type: ' + dhopt_types[control_cipherDH]
 
     dh2_types = Hash.new("\n")
-    dh2_types.merge( {'1': "2048 bits\n", '2': "3072 bits\n", '3': "4096 bits\n"} )
+    dh2_types.merge!( {'1' => "2048 bits\n", '2' => "3072 bits\n", '3' => "4096 bits\n"} )
     dh2_txt = 'Size of the Diffie-Hellman key: ' + dh2_types[control_cipherDH2]
 
     digest_types = Hash.new("\n")
-    digest_types.merge( {'1': "SHA-256\n", '2': "SHA-384\n", '3': "SHA-512\n"} )
+    digest_types.merge!( {'1' => "SHA-256\n", '2' => "SHA-384\n", '3' => "SHA-512\n"} )
     digest_txt = 'Digest algorithm for HMAC: ' + digest_types[digest_algorithm]
 
     tls_types = Hash.new("\n")
-    tls_types.merge( {'1': "tls-crypt\n", '2': "tls-auth\n"} )
+    tls_types.merge!( {'1' => "tls-crypt\n", '2' => "tls-auth\n"} )
     tls_txt = 'Additional security: ' + tls_types[tls_sig]
 
     opciones =  "#{name}\n#{address}\n#{port}\n#{protocol}\n#{dns_txt}\n#{compress_txt}\n"
     opciones += "#{encrypt_txt}\n#{curve_encrypt_txt}\n#{key_size_txt}\n#{control_cipher_txt}\n"
     opciones += "#{dh_txt}\n#{dhopt_txt}\n#{dh2_txt}\n#{digest_txt}\n#{tls_txt}\n"
-    puts opciones
+    puts 'Opciones', opciones
 
     ruta = Rails.root.join('vpn_files')
 
@@ -151,6 +152,7 @@ class VpnsController < ApplicationController
          control_cipherDH2, digest_algorithm, tls_sig
 
     @vpn = Vpn.new(vpn_params)
+    # TODO: Make safeguard for when the server is not found and try to remove the hardwired one
     @vpn.server = Server.find_by(id: '1')
     serv = @vpn.server.name
     server_id = @vpn.server.id
@@ -176,7 +178,7 @@ class VpnsController < ApplicationController
 
     respond_to do |format|
       if @vpn.save
-         # Actualizar el parámetro admin_vpn para el usuario actual
+        # Actualizar el parámetro admin_vpn para el usuario actual
         current_user_vpn = @vpn.users_vpns.find_by(user_id: current_user.id)
         current_user_vpn.update(admin_vpn: true) if current_user_vpn
 
@@ -249,7 +251,7 @@ class VpnsController < ApplicationController
     params.require(:vpn).permit(:name, :description, :port, :bandwidth, user_ids: [], vpn_admin_list: [])
   end
 
-  #Calculate the CIDR automatically avoiding human failures
+  # Calculate the CIDR automatically avoiding human failures
   def calculate_cidr(number_of_vpns)
     if number_of_vpns / 254 == 0
       "10.8.#{number_of_vpns}.0"
