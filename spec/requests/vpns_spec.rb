@@ -13,7 +13,7 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/vpns", type: :request do
-  
+
   # This should return the minimal set of attributes required to create a valid
   # Vpn. As you add validations to Vpn, be sure to
   # adjust the attributes here as well.
@@ -63,7 +63,6 @@ RSpec.describe "/vpns", type: :request do
           post vpns_url, params: { vpn: valid_attributes }
         }.to change(Vpn, :count).by(1)
       end
-
       it "redirects to the created vpn" do
         post vpns_url, params: { vpn: valid_attributes }
         expect(response).to redirect_to(vpn_url(Vpn.last))
@@ -76,13 +75,10 @@ RSpec.describe "/vpns", type: :request do
           post vpns_url, params: { vpn: invalid_attributes }
         }.to change(Vpn, :count).by(0)
       end
-
-    
       it "renders a response with 422 status (i.e. to display the 'new' template)" do
         post vpns_url, params: { vpn: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_entity)
       end
-    
     end
   end
 
@@ -91,14 +87,12 @@ RSpec.describe "/vpns", type: :request do
       let(:new_attributes) {
         skip("Add a hash of attributes valid for your model")
       }
-
       it "updates the requested vpn" do
         vpn = Vpn.create! valid_attributes
         patch vpn_url(vpn), params: { vpn: new_attributes }
         vpn.reload
         skip("Add assertions for updated state")
       end
-
       it "redirects to the vpn" do
         vpn = Vpn.create! valid_attributes
         patch vpn_url(vpn), params: { vpn: new_attributes }
@@ -108,24 +102,19 @@ RSpec.describe "/vpns", type: :request do
     end
 
     context "with invalid parameters" do
-    
       it "renders a response with 422 status (i.e. to display the 'edit' template)" do
         vpn = Vpn.create! valid_attributes
         patch vpn_url(vpn), params: { vpn: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_entity)
       end
-    
     end
   end
 
   describe "DELETE /destroy" do
     it "destroys the requested vpn" do
       vpn = Vpn.create! valid_attributes
-      expect {
-        delete vpn_url(vpn)
-      }.to change(Vpn, :count).by(-1)
+      expect { delete vpn_url(vpn) }.to change(Vpn, :count).by(-1)
     end
-
     it "redirects to the vpns list" do
       vpn = Vpn.create! valid_attributes
       delete vpn_url(vpn)
