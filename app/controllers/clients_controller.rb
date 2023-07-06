@@ -39,7 +39,6 @@ class ClientsController < ApplicationController
  
 
     ruta = Rails.root.join('vpn_files', servername,vpnName, 'Clients').to_s
-    password = 'javier y pepo'
 
     if @client.encrypted_password.present?
       contrasena = @client.encrypted_password

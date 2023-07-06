@@ -58,7 +58,6 @@ class ServersController < ApplicationController
   
   def destroy
     sername = @server.name
-    password = "javier y pepo"
     ruta = Rails.root.join('vpn_files', "#{sername}").to_s
   
     ActiveRecord::Base.transaction do
