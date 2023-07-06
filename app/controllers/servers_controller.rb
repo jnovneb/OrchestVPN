@@ -1,5 +1,6 @@
 class ServersController < ApplicationController
   before_action :set_server, only: %i[show edit update destroy]
+  @password = Rails.application.credentials.sudo_pass
 
   # GET /servers or /servers.json
   def index
@@ -67,7 +68,7 @@ class ServersController < ApplicationController
         vpn.clients.find_each do |client|
           name = client.name
           path = Rails.root.join('vpn_files', sername, 'VPNs', vpnname).to_s
-          command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{name} #{path}"
+          command = "echo '#{@password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{name} #{path}"
           system(command)
           client.destroy
         end
@@ -78,7 +79,7 @@ class ServersController < ApplicationController
       end
       @server.destroy!
   
-      command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleServer.sh #{sername} #{ruta}"
+      command = "echo '#{@password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleServer.sh #{sername} #{ruta}"
       system(command)
     end
   
