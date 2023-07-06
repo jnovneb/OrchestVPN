@@ -1,5 +1,19 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe User, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+RSpec.describe 'User' do
+  before do
+    # Do nothing
+  end
+
+  after do
+    # Do nothing
+  end
+
+  context 'when condition' do
+    it 'succeeds' do
+      pending 'Not implemented'
+    end
+  end
 end
