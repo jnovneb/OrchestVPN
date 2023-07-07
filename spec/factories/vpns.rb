@@ -3,21 +3,21 @@ require 'faker'
 
 FactoryBot.define do
   factory :vpn do
-    vpn { Faker::Name.name }
+    vpn { Faker::Lorem.word }
     name { Faker::Name.name }
     description { Faker::Lorem.sentence }
-    protocol { Faker::Internet.slug }
-    port { Faker::Internet.slug }
-    options { Faker::Lorem.sentence }
-    certificate { Faker::Lorem.sentence }
-    version { Faker::Internet.slug }
-    VPNAdminList { Faker::Lorem.sentence }
-    users { Faker::Lorem.sentence }
-    vpn_admin_list { Faker::Lorem.sentence }
-    bandwidth { Faker::Number.number(8)}
-    CIDR { Faker::Internet.ip_v4_cidr }
-    server_id { Faker::Number.number(8)}
-    hostkey { Faker::Lorem.sentence }
-    managementPort { Faker::Internet.slug }
+    protocol { 'udp' }
+    port { 1194 }
+    options { Faker::Lorem.word }
+    certificate { Faker::Lorem.word }
+    version { '2.4' }
+    VPNAdminList { Faker::Lorem.word }
+    users { Faker::Lorem.word }
+    vpn_admin_list { Faker::Lorem.word }
+    bandwidth { 100 }
+    CIDR { '10.0.0.0/24' }
+    association :server
+    hostkey { Faker::Lorem.word }
+    managementPort { '5555' }
   end
 end

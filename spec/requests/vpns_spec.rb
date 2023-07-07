@@ -18,7 +18,7 @@ RSpec.describe "/vpns", type: :request do
   # Vpn. As you add validations to Vpn, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    FactoryBot.create(:vpn)
   }
 
   let(:invalid_attributes) {
