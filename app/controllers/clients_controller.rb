@@ -1,5 +1,6 @@
 class ClientsController < ApplicationController
   before_action :set_client, only: %i[ show edit update destroy ]
+  @password = Rails.application.credentials.sudo_pass
 
   # GET /clients or /clients.json
   def index
@@ -38,7 +39,6 @@ class ClientsController < ApplicationController
  
 
     ruta = Rails.root.join('vpn_files', servername,vpnName, 'Clients').to_s
-    password = 'javier y pepo'
 
     if @client.encrypted_password.present?
       contrasena = @client.encrypted_password
@@ -46,7 +46,7 @@ class ClientsController < ApplicationController
       contrasena = nil
     end
 
-    command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/newClient.sh #{ruta} #{name} #{vpnName} #{clientaddr} #{clientaddrout}#{contrasena} "
+    command = "echo '#{@password}' | sudo -E -S #{Rails.root}/vendor/sh/newClient.sh #{ruta} #{name} #{vpnName} #{clientaddr} #{clientaddrout}#{contrasena} "
     system(command)
 
     rt = Rails.root.join('vpn_files', servername, vpnName, 'Clients', "#{name}.ovpn")
