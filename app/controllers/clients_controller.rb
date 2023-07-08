@@ -1,5 +1,6 @@
 class ClientsController < ApplicationController
   before_action :set_client, only: %i[ show edit update destroy ]
+
   @password = Rails.application.credentials.sudo_pass
 
   # GET /clients or /clients.json
@@ -23,9 +24,7 @@ class ClientsController < ApplicationController
 
   # POST /clients or /clients.json
   def create
-
     @client = Client.new(client_params)
-
     @client.vpn_id = Vpn.find_by(name: @client.vpnName)&.id
 
     servername = @client.vpn.server.name
@@ -36,7 +35,6 @@ class ClientsController < ApplicationController
     cidr = obtener_direccion_ip_from_archivo(file)
     clientaddr = calculate_IP_in(cidr)
     clientaddrout = calculate_IP_out(cidr)
- 
 
     ruta = Rails.root.join('vpn_files', servername,vpnName, 'Clients').to_s
 
@@ -51,19 +49,16 @@ class ClientsController < ApplicationController
 
     rt = Rails.root.join('vpn_files', servername, vpnName, 'Clients', "#{name}.ovpn")
 
-    archi = File.read(rt)
-    config= archi.match(/.*(?=<ca>)/m).to_s
-
-    cert = archi.scan(/<cert>(.*?)<\/cert>/m).flatten.first
+    archi  = File.read(rt)
+    config = archi.match(/.*(?=<ca>)/m).to_s
+    cert   = archi.scan(/<cert>(.*?)<\/cert>/m).flatten.first
     @client.update(cert: cert)
-    
     @client.update(options: config)
 
     rt2 = Rails.root.join('vpn_files', servername, vpnName, 'Clients', name+".ovpn")
 
     respond_to do |format|
       if @client.save
-
         # Adjuntar archivo al modelo Client
         file = File.open(rt2)
         puts rt2
@@ -72,7 +67,6 @@ class ClientsController < ApplicationController
         format.html { redirect_to client_url(@client), notice: "Client was successfully created." }
         format.json { render :show, status: :created, location: @client }
       else
-        puts "Dentro else"
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @client.errors, status: :unprocessable_entity }
       end
@@ -96,12 +90,10 @@ class ClientsController < ApplicationController
   def destroy
     servername = @client.vpn.server.name
     vpnName = @client.vpnName
-
-    password = "javier y pepo"
     nombre = @client.name
     ruta = Rails.root.join('vpn_files', servername, vpnName, 'Clients').to_s
     #Llamar al script de Bash con los argumentos recopilados
-    command = "echo '#{password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{nombre} #{ruta}"
+    command = "echo '#{@password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{nombre} #{ruta}"
     system(command)
     @client.destroy
 
@@ -112,59 +104,48 @@ class ClientsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_client
-      @client = Client.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def client_params
-      params.require(:client).permit(:vpnName, :name, :desc, :cert, :options, :vpn_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_client
+    @client = Client.find(params[:id])
+  end
 
-    def calculate_IP_in(cidr)
-      #Get the number of clients associated to the VPN
-      if @client.vpn.clients.count == 0
-        #If we dont have clients yet, numberClients=1(The one that we are creating)
-        numberClients = @client.vpn.clients.count + 1
-      else
-        #numberClients will be 2, because we use 2 IP for each client
-        numberClients = @client.vpn.clients.count + 2
-      end
-      puts numberClients
-      #Split IP
-      octetos = cidr.split('.')
-      #Replace last one with the numberClients value
-      octetos[3] = numberClients
+  # Only allow a list of trusted parameters through.
+  def client_params
+    params.require(:client).permit(:vpnName, :name, :desc, :cert, :options, :vpn_id)
+  end
 
-      #Join to form new IP
-      nueva_ip = octetos.join('.')
-      puts nueva_ip
-      return nueva_ip
-    end
-
-    def calculate_IP_out(cidr)
-      #Get the number of clients associated to the VPN
+  def calculate_IP_in(cidr)
+    # Get the number of clients associated to the VPN
+    if @client.vpn.clients.count == 0
+      # If we dont have clients yet, numberClients=1(The one that we are creating)
+      numberClients = @client.vpn.clients.count + 1
+    else
+      # numberClients will be 2, because we use 2 IP for each client
       numberClients = @client.vpn.clients.count + 2
-      puts numberClients
-      #Split IP
-      octetos = cidr.split('.')
-      #Replace last one with the numberClients value
-      octetos[3] = numberClients
-
-      #Join to form new IP
-      nueva_ip = octetos.join('.')
-      puts nueva_ip
-      return nueva_ip
     end
+    # puts numberClients
+    octetos = cidr.split('.')       # Split IP
+    octetos[3] = numberClients      # Replace last one with numberClients
+    nueva_ip = octetos.join('.')    # Join to form new IP
+    # puts nueva_ip
+    return nueva_ip
+  end
 
-    def obtener_direccion_ip_from_archivo(archivo)
-      # Read file content
-      contenido = File.read(archivo)
-      # Search server line
-      linea_server = contenido.lines.find { |linea| linea.include?("server") }
-      # Get the IP
-      direccion_ip = linea_server.split(" ")[1]
-      return direccion_ip
-    end
+  def calculate_IP_out(cidr)
+    numberClients = @client.vpn.clients.count + 2
+    # puts numberClients
+    octetos = cidr.split('.')      # Split IP
+    octetos[3] = numberClients     # Replace last one with the numberClients value
+    nueva_ip = octetos.join('.')   # Join to form new IP
+    # puts nueva_ip
+    return nueva_ip
+  end
+
+  def obtener_direccion_ip_from_archivo(archivo)
+    contenido = File.read(archivo)
+    linea_server = contenido.lines.find {|linea| linea.include?("server")}   # Search server line
+    direccion_ip = linea_server.split(" ")[1]    # Get IP address
+    return direccion_ip
+  end
 end

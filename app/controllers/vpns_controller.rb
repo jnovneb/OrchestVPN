@@ -220,7 +220,7 @@ class VpnsController < ApplicationController
       # Obtener el nombre del archivo sin la extensión .ovpn
       nombre = File.basename(archivo, '.ovpn')
       # Llamar al script de Bash con los argumentos recopilados
-      command = "echo '#{@password}' | sudo -E -S #{Rails.root.to_}/vendor/sh/DeleteSingleClient.sh #{nombre} #{ruta}"
+      command = "echo '#{@password}' | sudo -E -S #{Rails.root}/vendor/sh/DeleteSingleClient.sh #{nombre} #{ruta}"
       system(command)
     end
 
