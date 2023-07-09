@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe VpnsController, type: :controller do
+RSpec.describe VpnsController, type: :request do
   let(:admin_user) { User.create(admin: true) }
   let(:user)       { User.create(admin: false) }
 
@@ -8,35 +8,91 @@ RSpec.describe VpnsController, type: :controller do
     @vpn = Vpn.create(name: 'Test VPN', description: 'Test VPN Description')
   end
 
-  describe 'GET #index' do
-    context 'when user is an admin' do
+  describe 'PATCH #update' do
+    let(:updated_name) { 'Updated VPN Name' }
+
+    context 'with valid parameters' do
+      let(:valid_params) { { vpn: {name: updated_name} } }
       before do
         sign_in admin_user
       end
 
-      it 'assigns all vpns to @vpns' do
-        get :index
-        expect(assigns(:vpns)).to eq(Vpn.all)
+      it 'updates the requested vpn' do
+        patch :update, params: { id: @vpn.id, vpn: valid_params }
+        @vpn.reload
+        expect(@vpn.name).to eq(updated_name)
       end
-      it 'renders the index template' do
-        get :index
-        expect(response).to render_template(:index)
+      it 'redirects to the updated vpn' do
+        patch :update, params: { id: @vpn.id, vpn: valid_params }
+        expect(response).to redirect_to(vpn_path(@vpn))
+        expect(response).to have_http_status(302)
       end
     end
 
-    context 'when user is not an admin' do
+    context 'with invalid parameters' do
+      let(:invalid_params) { {vpn: {name: ''}} }
       before do
-        sign_in user
-        @user_vpn = UsersVpn.create(user: user, vpn: @vpn, admin_vpn: true)
+        sign_in admin_user
       end
 
-      it "assigns user's admin vpns to @vpns" do
-        get :index
-        expect(assigns(:vpns)).to eq([@vpn])
+      it 'does not update the requested vpn' do
+        patch :update, params: { id: @vpn.id, vpn: invalid_params }
+        @vpn.reload
+        expect(@vpn.name).not_to be_blank
+      end
+      it 'renders the edit template' do
+        patch :update, params: { id: @vpn.id, vpn: invalid_params }
+        expect(response).to render_template(:edit)
+      end
+    end
+  end
+
+  describe 'GET #index' do
+    let(:admin_user) { create(:user, admin: true) }
+    let(:non_admin_user) { create(:user, admin: false) }
+
+    context 'when the user is an admin' do
+      let!(:vpns) { create_list(:vpn, 3) }
+      before do
+        sign_in(admin_user)
+        get '/vpns'
+      end
+
+      it 'returns a successful response' do
+        expect(response).to have_http_status(200)
+      end
+      it 'assigns all VPNs to @vpns' do
+        expect(assigns(:vpns)).to match_array(vpns)
+      end
+    end
+
+    context 'when the user is not an admin' do
+      let(:admin_vpns) { create_list(:vpn, 2, admin_vpn: true) }
+      let(:non_admin_vpns) { create_list(:vpn, 3, admin_vpn: false) }
+      let!(:user_vpns) { create_list(:users_vpn, 2, user: non_admin_user, vpn: admin_vpns.first) }
+      before do
+        sign_in non_admin_user
+        get '/vpns'
+      end
+
+      it 'assigns the admin vpns to @vpns' do
+        expect(assigns(:vpns)).to match_array(admin_vpns)
+      end
+      it 'does not assign the non-admin vpns to @vpns' do
+        expect(assigns(:vpns)).not_to include(non_admin_vpns)
       end
       it 'renders the index template' do
-        get :index
         expect(response).to render_template(:index)
+      end
+      it 'returns a successful response' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context 'when user is not signed in' do
+      it 'redirects to the sign in page' do
+        get :index
+        expect(response).to redirect_to(new_user_session_path)
       end
     end
   end
@@ -108,44 +164,6 @@ RSpec.describe VpnsController, type: :controller do
       it 'renders the new template' do
         post :create, params: invalid_params
         expect(response).to render_template(:new)
-      end
-    end
-  end
-
-  describe 'PATCH #update' do
-    context 'with valid parameters' do
-      let(:valid_params) { { vpn: {name: 'Updated VPN'} } }
-
-      before do
-        sign_in admin_user
-      end
-
-      it 'updates the requested vpn' do
-        patch :update, params: { id: @vpn.id, vpn: valid_params }
-        @vpn.reload
-        expect(@vpn.name).to eq('Updated VPN')
-      end
-      it 'redirects to the updated vpn' do
-        patch :update, params: { id: @vpn.id, vpn: valid_params }
-        expect(response).to redirect_to(vpn_path(@vpn))
-      end
-    end
-
-    context 'with invalid parameters' do
-      let(:invalid_params) { {vpn: {name: ''}} }
-
-      before do
-        sign_in admin_user
-      end
-
-      it 'does not update the requested vpn' do
-        patch :update, params: { id: @vpn.id, vpn: invalid_params }
-        @vpn.reload
-        expect(@vpn.name).not_to be_blank
-      end
-      it 'renders the edit template' do
-        patch :update, params: { id: @vpn.id, vpn: invalid_params }
-        expect(response).to render_template(:edit)
       end
     end
   end
