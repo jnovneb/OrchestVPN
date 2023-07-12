@@ -7,15 +7,16 @@ class OpenvpnManager
   # @param [Hash] options
   def initialize(options = {})
     @options = options
-    @options[Host:]    = 'localhost' unless @options.key?(Host:)
-    @options[Port:]    = 7505        unless @options.key?(Port:)
-    @options[Timeout:] = 10          unless @options.key?(Timeout:)
-    @options[Prompt:]  = />INFO:OpenVPN.*\n/
+    @options['Host']    = 'localhost' unless @options.key?('Host')
+    @options['Port']    = 7505        unless @options.key?('Port')
+    @options['Timeout'] = 10          unless @options.key?('Timeout')
+    @options['Prompt']  = />INFO:OpenVPN.*\n/
+    puts @options
     begin
       # Create a new Telnet object
       @client = Net::Telnet::new(@options)
       @client.login('LoginPrompt' => /ENTER PASSWORD:/, 'Name' => @options['Password']) if @options['Password']
-    rescue => e
+    rescue StandardError => e
       puts "Unable to create a new Telnet object: #{e.message}"
     end
   end

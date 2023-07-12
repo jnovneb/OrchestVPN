@@ -1,5 +1,6 @@
 class MonitoringController < ApplicationController
   def index
+    status
     render
   end
 
@@ -16,5 +17,12 @@ class MonitoringController < ApplicationController
   # TODO
   def set_rrd
 
+  end
+
+  private
+
+  def status
+    vpn_manager = OpenvpnManager.new 'Host': 'localhost', 'Port': 7505
+    @status = vpn_manager.status
   end
 end
