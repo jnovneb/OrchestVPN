@@ -28,7 +28,9 @@
             <%= link_to "Show", client_path(client), class: "btn btn-primary" %>
           </td>
           <% if current_user.admin %>
-            <td><%= client[:monitore] %></td>
+            <td>
+              <%= link_to "Monitore", monitoring_path, class: "btn btn-primary" %>
+            </td>
           <% end %>
         </tr>
       <% end %>
