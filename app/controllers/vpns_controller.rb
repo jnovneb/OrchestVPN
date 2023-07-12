@@ -162,6 +162,10 @@ class VpnsController < ApplicationController
     server_id = @vpn.server.id
     #    puts server_id
     @vpn.server_id = server_id
+
+    portint = port.to_i
+    management = (portint + 7500).to_s
+    @vpn.managementPort = management
     # Llamar al script de Bash con los argumentos recopilados
     command = "echo '#{@password}' | sudo -E -S #{Rails.root.to_s}/vendor/sh/VPNInstalation.sh #{ruta} #{name} #{address} #{accept_IPV6} #{port} #{protocol} #{dns} #{primarydns} #{secondarydns} #{compressbtn} #{compression} #{encryptbtn} #{encrypt} #{encrypt_cert} #{compress_encrypt} #{key_size_encrypt} #{control_cipher} #{diffie_hellman} #{control_cipherDH} #{control_cipherDH2} #{digest_algorithm} #{tls_sig} #{serv} #{cidr}"
     system(command)
