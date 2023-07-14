@@ -1,7 +1,7 @@
 <div id="<%= dom_id vpn %>" style="display: flex; align-items: center; margin-top: 20px; margin-left: 20px; margin-right: 20px;">
   <h2 style="margin-left: 10px;"><%= vpn.name %></h2>
   <% if action_name != "show" %>
-    <%= link_to "Show this vpn", vpn, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium", style: "font-size: 1.2em; margin-left: auto;" %>
+    <%= link_to "Monitor this vpn", vpn, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium", style: "font-size: 1.2em; margin-left: auto;" %>
     <%= link_to 'Edit this vpn', edit_vpn_path(vpn), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium", style: "font-size: 1.2em;" %>
     <% if vpn.clients.count < 254 %>
       <%= link_to "New Client", new_client_path(vpn_name: vpn.name), class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium", style: "font-size: 1.2em; margin-right: 10px;" %>

@@ -15,7 +15,7 @@ class OpenvpnManager
     begin
       # Create a new Telnet object
       @client = Net::Telnet::new(@options)
-      @client.login('LoginPrompt' => /ENTER PASSWORD:/, 'Name' => @options['Password']) if @options['Password']
+      @client.login('LoginPrompt' => /ENTER PASSWORD:/, 'Name' => @options[:Password]) if @options[:Password]
     rescue StandardError => e
       puts "Unable to create a new Telnet object: #{e.message}"
     end
@@ -69,12 +69,14 @@ class OpenvpnManager
 
   # Get information about number of clients connected and traffic statistic (bytes in & bytes out)
   def stats
-    stats_arr = send_command('load-stats').split(',')
-    {
-      clients: stats_arr[0].gsub('nclients=', '').to_i,
-      bytes_download: stats_arr[1].gsub('bytesin=', '').to_i,
-      bytes_upload: stats_arr[2].chop!.gsub('bytesout=', '').to_i
-    }
+    unless @client.nil?
+      stats_arr = send_command('load-stats').split(',')
+      {
+        clients: stats_arr[0].gsub('nclients=', '').to_i,
+        bytes_download: stats_arr[1].gsub('bytesin=', '').to_i,
+        bytes_upload: stats_arr[2].chop!.gsub('bytesout=', '').to_i
+      }
+    end
   end
 
   # Returns a string showing the processes and management interface's version

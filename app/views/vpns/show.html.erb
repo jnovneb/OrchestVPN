@@ -5,6 +5,8 @@
     <% end %>
 
     <%= render @vpn %>
+    <%= image_tag(@graphs[0]) %>
+    <%= image_tag(@graphs[1]) %>
 
     <%= link_to 'Edit this vpn', edit_vpn_path(@vpn), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
     <div class="inline-block ml-2">

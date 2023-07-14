@@ -41,6 +41,7 @@ class VPNtoRRD
            label: 'Clients', legend: 'Clients',
            width: 1
     end
+    return ["#{@vpn}-trf.png", "#{@vpn}-cli.png"]
   end
 
   private

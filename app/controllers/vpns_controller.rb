@@ -1,3 +1,5 @@
+require "#{Rails.root}/lib/rrd_interface"
+
 class VpnsController < ApplicationController
   before_action :set_vpn, only: %i[ show edit update destroy ]
 
@@ -14,6 +16,9 @@ class VpnsController < ApplicationController
 
   # GET /vpns/1 or /vpns/1.json
   def show
+    @vpn = Vpn.find(params[:id])
+    @vpn_rrd = ::VPNtoRRD.new @vpn.name
+    @graphs = @vpn_rrd.graph
   end
 
   # GET /vpns/new

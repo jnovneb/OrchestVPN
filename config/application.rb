@@ -37,5 +37,14 @@ module VPN
 
     # I18n
     config.i18n.default_locale = :en
+
+    # ActiveJob queue
+    config.active_job.queue_adapter = :async
+    config.active_job.queue_name_prefix = Rails.env
+    config.active_job.queue_name_delimiter = '_'
+
+    # Configure the scheduler
+    config.active_job.scheduler = :cron
+    config.active_job.scheduler_options = { cron: '*/2 * * * *' }
   end
 end

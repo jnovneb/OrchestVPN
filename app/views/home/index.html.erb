@@ -29,7 +29,7 @@
           </td>
           <% if current_user.admin %>
             <td>
-              <%= link_to "Monitor", monitoring_path, class: "btn btn-primary" %>
+              <%= link_to "Monitor", monitoring_path(vpn_id: client.id), class: "btn btn-primary" %>
             </td>
           <% end %>
         </tr>
