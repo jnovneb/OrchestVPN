@@ -1,4 +1,64 @@
-require "#{Rails.root}/lib/rrd_interface"
+require 'rrd'
+
+# Class to act as a interface between the VPN and the RRD files
+class VPNtoRRD
+  def initialize(vpn)
+    @vpn      = vpn.to_s
+    @vpn_path = "#{Rails.root.join('vpn_files','rrd')}"
+    @vpn_file = @vpn_path + "#{vpn}.rrd"
+    @vpn_rrd  = RRD::Base.new(@vpn_file)
+  end
+
+  def update(bytes_in, bytes_out, clients)
+    create unless File.exist? @vpn_file
+    @vpn_rrd.update Time.now, bytes_in, bytes_out, clients
+  end
+
+  def graph
+    # Local variable to avoid problems with the instance variable in module RRD
+    rrd_file = @vpn_file
+    graph0 = @vpn_path + "#{@vpn}-trf.png"
+    graph1 = @vpn_path + "#{@vpn}-cli.png"
+    RRD.graph graph0,
+              title: 'VPN traffic',
+              width: 800, height: 250,
+              color: ['FONT#000000', 'BACK#FFFFFF'] do
+      line rrd_file,
+           bytes_in: :average,
+           color: '#FF0000',
+           label: 'Bytes IN', legend: 'Bytes IN',
+           width: 1
+      line rrd_file,
+           bytes_out: :average,
+           color: '#00FF00',
+           label: 'Bytes OUT', legend: 'Bytes OUT',
+           width: 1
+    end
+    RRD.graph graph1,
+              title: 'VPN clients',
+              width: 800, height: 250,
+              color: ['FONT#000000', 'BACK#FFFFFF'] do
+      line rrd_file,
+           clients: :average,
+           color: '#0000FF',
+           label: 'Clients', legend: 'Clients',
+           width: 1
+    end
+    return [graph0, graph1]
+  end
+
+  private
+
+  def create
+    @vpn_rrd.create start: Time.now - 1.minute, step: 5.minutes do
+      datasource 'bytes_in',  type: :gauge, heartbeat: 10.minutes, min: 0, max: :unlimited
+      datasource 'bytes_out', type: :gauge, heartbeat: 10.minutes, min: 0, max: :unlimited
+      datasource 'clients',   type: :gauge, heartbeat: 10.minutes, min: 0, max: :unlimited
+      archive :average, every: 10.minutes, during: 1.year
+    end
+  end
+end
+
 
 class VpnsController < ApplicationController
   before_action :set_vpn, only: %i[ show edit update destroy ]
@@ -17,7 +77,7 @@ class VpnsController < ApplicationController
   # GET /vpns/1 or /vpns/1.json
   def show
     @vpn = Vpn.find(params[:id])
-    @vpn_rrd = ::VPNtoRRD.new @vpn.name
+    @vpn_rrd = VPNtoRRD.new @vpn.name
     @graphs = @vpn_rrd.graph
   end
 
