@@ -4,8 +4,7 @@ require 'rrd'
 class VPNtoRRD
   def initialize(vpn)
     @vpn      = vpn.to_s
-    @vpn_path = "#{Rails.root.join('vpn_files','rrd')}"
-    @vpn_file = @vpn_path + "#{vpn}.rrd"
+    @vpn_file = Rails.root.join('vpn_files', 'rrd', "#{@vpn}.rrd").to_s
     @vpn_rrd  = RRD::Base.new(@vpn_file)
   end
 
@@ -17,8 +16,8 @@ class VPNtoRRD
   def graph
     # Local variable to avoid problems with the instance variable in module RRD
     rrd_file = @vpn_file
-    graph0 = @vpn_path + "#{@vpn}-trf.png"
-    graph1 = @vpn_path + "#{@vpn}-cli.png"
+    graph0 = Rails.root.join('app', 'assets', 'images', 'rrd', "#{@vpn}-trf.png").to_s
+    graph1 = Rails.root.join('app', 'assets', 'images', 'rrd', "#{@vpn}-cli.png").to_s
     RRD.graph graph0,
               title: 'VPN traffic',
               width: 800, height: 250,
@@ -44,7 +43,7 @@ class VPNtoRRD
            label: 'Clients', legend: 'Clients',
            width: 1
     end
-    return [graph0, graph1]
+    return ["assets/images/rrd/#{@vpn}-trf.png", "assets/images/rrd/#{@vpn}-cli.png"]
   end
 
   private
