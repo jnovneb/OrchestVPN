@@ -22,8 +22,6 @@ Rails.application.routes.draw do
 
   get '/users/options', to: 'users#options', as: 'options'
 
-  get 'vpn_manager/status', to: 'vpn_manager#status', as: 'status'
-
   resources :users do
     member do
       patch :move_to_admins

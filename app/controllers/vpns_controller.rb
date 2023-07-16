@@ -16,8 +16,8 @@ class VPNtoRRD
   def graph
     # Local variable to avoid problems with the instance variable in module RRD
     rrd_file = @vpn_file
-    graph0 = Rails.root.join('app', 'assets', 'images', 'rrd', "#{@vpn}-trf.png").to_s
-    graph1 = Rails.root.join('app', 'assets', 'images', 'rrd', "#{@vpn}-cli.png").to_s
+    graph0 = Rails.root.join('public', "#{@vpn}-trf.png").to_s
+    graph1 = Rails.root.join('public', "#{@vpn}-cli.png").to_s
     RRD.graph graph0,
               title: 'VPN traffic',
               width: 800, height: 250,
@@ -43,7 +43,7 @@ class VPNtoRRD
            label: 'Clients', legend: 'Clients',
            width: 1
     end
-    return ["assets/images/rrd/#{@vpn}-trf.png", "assets/images/rrd/#{@vpn}-cli.png"]
+    return ["/#{@vpn}-trf.png", "/#{@vpn}-cli.png"]
   end
 
   private
