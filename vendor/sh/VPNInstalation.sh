@@ -742,8 +742,7 @@ WantedBy=multi-user.target" >/etc/systemd/system/iptables-openvpn.service
 	tls-cipher $CC_CIPHER
 	ignore-unknown-option block-outside-dns
 	setenv opt block-outside-dns # Prevent Windows 10 DNS leak
-	verb 3
-	push 'redirect-gateway def1 bypass-dhcp' " >>/etc/openvpn/client-template-$SERVER_NAME.txt
+	verb 3 " >>/etc/openvpn/client-template-$SERVER_NAME.txt
 
 mkdir -p $RUTADIREC/Clients
 
