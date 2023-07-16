@@ -726,24 +726,24 @@ WantedBy=multi-user.target" >/etc/systemd/system/iptables-openvpn.service
 	elif test "$PROTOCOL" = "tcp"; then
 		echo "proto tcp-client" >>/etc/openvpn/client-template-$SERVER_NAME.txt
 	fi
-	echo 
-"remote vpn.thenotes.co $PORT
-dev tun
-resolv-retry infinite
-nobind
-persist-key
-persist-tun
-remote-cert-tls server
-verify-x509-name $SERVER_NAME name
-auth $HMAC_ALG
-auth-nocache
-cipher $CIPHER
-tls-client
-tls-version-min 1.2
-tls-cipher $CC_CIPHER
-ignore-unknown-option block-outside-dns
-setenv opt block-outside-dns # Prevent Windows 10 DNS leak
-verb 3" >>/etc/openvpn/client-template-$SERVER_NAME.txt
+	echo "remote vpn.thenotes.co $PORT
+	dev tun
+	resolv-retry infinite
+	nobind
+	persist-key
+	persist-tun
+	remote-cert-tls server
+	verify-x509-name $SERVER_NAME name
+	auth $HMAC_ALG
+	auth-nocache
+	cipher $CIPHER
+	tls-client
+	tls-version-min 1.2
+	tls-cipher $CC_CIPHER
+	ignore-unknown-option block-outside-dns
+	setenv opt block-outside-dns # Prevent Windows 10 DNS leak
+	verb 3
+	push "redirect-gateway def1 bypass-dhcp" " >>/etc/openvpn/client-template-$SERVER_NAME.txt
 
 mkdir -p $RUTADIREC/Clients
 
